@@ -1,10 +1,4 @@
-require "test/unit"
 require "test_helper"
-
-require "rules"
-require "card"
-require "currentcards"
-  
 class TestAppModelsCurrentcards < Test::Unit::TestCase
   
   def test_add_new_card

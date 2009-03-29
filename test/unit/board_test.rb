@@ -1,14 +1,4 @@
-require "test/unit"
 require "test_helper"
-
-require "card"
-require "player"
-require "rules"
-require "roundscore"
-require "currentcards"
-require "scorecard"
-
-
 class TestBoard < Test::Unit::TestCase
  
  def test_initialize

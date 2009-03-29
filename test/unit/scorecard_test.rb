@@ -1,10 +1,4 @@
-require "test/unit"
 require "test_helper"
-
-
-require "scorecard"
-require "roundscore"
-require "currentcards"
 
 class TestAppModelsScorecard < Test::Unit::TestCase
 

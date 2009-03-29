@@ -1,10 +1,4 @@
-require "test/unit"
-require "test/unit"
 require "test_helper"
-
-require "roundscore"
-require "currentcards"
-    
 class TestAppModelsRoundscore < Test::Unit::TestCase
 
   def test_add

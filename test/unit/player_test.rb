@@ -1,9 +1,4 @@
-require "test/unit"
 require "test_helper"
-
-require "card"
-require "currentcards"
-require "player"
 
 class TestAppModelsPlayer < Test::Unit::TestCase
 

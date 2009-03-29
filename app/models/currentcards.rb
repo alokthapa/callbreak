@@ -1,6 +1,5 @@
 
 class CurrentCards
-  alias org_to_json to_json
   
   def initialize()
     @ccards = []
@@ -34,10 +33,7 @@ class CurrentCards
     @ccards.rassoc(Rules.beats_all(get_cards)).first
   end
   
-  def to_json
-    @ccards.map{ |pair| {"  dir:  " => pair[0], "  card:  " => pair[1].to_json }}.to_json
-  end
-  
+
   def to_s
     @ccards.map{ |pair| {:dir => pair[0], :card => pair[1].to_s}}.to_s
   end

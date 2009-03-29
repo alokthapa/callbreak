@@ -2,8 +2,6 @@ require "cardutility"
 class Card
   include Cardutility
   include Enumerable
-  alias org_to_json to_json
-  
   attr_reader :suit, :value, :id
 
   def Card.suits
@@ -52,10 +50,7 @@ class Card
       nil if other.suit != @suit
      Card.values.index(@value) < Card.values.index(other.value)
   end
-  
-  def to_json
-    {"suit" => @suit, "value" => @value, "id" => @id}.to_json
-  end
+
   
   
 end

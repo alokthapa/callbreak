@@ -1,6 +1,5 @@
 class Board
   attr_reader :players, :scorecard, :user
-  alias org_to_json to_json
 
   def user
     @players[:s]
@@ -73,6 +72,15 @@ class Board
     @players.values.each { |p|  p.register_move(dir, card) }
   end
   
+  def calculate_win_diff
+    scores = Hash.new
+    directions.each do  |d|
+      scores[d] = @scorecard.get_scorecard(d)
+    end
+    scores = scores.sort{ |a, b| a[1] <=> b[1]}
+    scores.last[0] - scores[-1][0]
+  end
+  
   def calculate_winner
     scores = Hash.new
     directions.each do  |d|
@@ -128,15 +136,6 @@ class Board
     nonly = {}
     @players.each{ |key,value| nonly[key] = value.name }
     nonly
-  end
-  
-  
-  def to_json
-    {  "players" => names_only.to_json,
-       "scorecard" => @scorecard.to_json ,
-       "current_round" => @scorecard.current_round.to_json,
-       "current_cards" => current_cards.to_json,
-       "user_cards" =>  user.cards.map{ |card| card.to_json }}.to_json
   end
   
 end

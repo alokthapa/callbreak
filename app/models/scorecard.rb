@@ -1,7 +1,5 @@
 class Scorecard
   
-  alias org_to_json to_json
-  
   attr_reader :rscores, :current_round
   def initialize
       @rscores = Array.new
@@ -44,17 +42,6 @@ class Scorecard
   
   def last_hand
     current_round.last_hand
-  end
-  
-  def to_json
-    if @rscores.length > 1
-       old = @rscores - current_round
-       old.map{ |rscore| rscore.get_score.to_json }
-    else 
-      [].to_json
-    end
-    
-    
   end
 
 end

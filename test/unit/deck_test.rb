@@ -1,11 +1,4 @@
-require "test/unit"
 require "test_helper"
-
-require "card"
-require "player"
-require "rules"
-require "deck"
-
 
 class TestDeck < Test::Unit::TestCase
 

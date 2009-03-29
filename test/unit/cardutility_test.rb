@@ -1,10 +1,4 @@
-require "test/unit"
 require "test_helper"
-
-require "card"
-require "rules"
-require "player"
-require "cardutility"
          
 class TestApp < Test::Unit::TestCase
   include Cardutility

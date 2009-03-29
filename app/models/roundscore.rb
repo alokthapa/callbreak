@@ -1,7 +1,5 @@
 class RoundScore
-  attr_reader :hash, :called, :hands
-  alias org_to_json to_json
-  
+  attr_reader :hash, :called, :hands  
   def initialize
     @hash = {:n => 0,:e => 0,:s => 0, :w => 0}
     @called  = {:n => 0,:e => 0,:s => 0, :w => 0}
@@ -59,10 +57,6 @@ class RoundScore
     else
       @called[name] + (@hash[name] - @called[name] ) * 0.1
     end
-  end
-  
-  def to_json
-    { "called" => @called.to_json, "actual" => @hash.to_json}.to_json
   end
   
 end

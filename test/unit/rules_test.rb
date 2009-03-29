@@ -1,10 +1,4 @@
-require "test/unit"
 require "test_helper"
-
-
-require "card"
-require "rules"
-
 class TestAppModelsRules < Test::Unit::TestCase
 
   def test_valid_suit_moves

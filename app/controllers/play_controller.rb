@@ -1,18 +1,17 @@
-require "app/models/roundscore"
-require "app/models/currentcards"
-require "app/models/scorecard"
-require "app/models/board"
-require "app/models/player"
-require "app/models/paranoid"
-require "app/models/card"
-require "app/models/deck"
-require "app/models/rules"
+require "roundscore"
+require "currentcards"
+require "scorecard"
+require "board"
+require "player"
+require "paranoid"
+require "card"
+require "deck"
+require "rules"
 
 
 
 
 class PlayController < ApplicationController
-	
 	before_filter :init, :except => [:about, :index, :new_game, :get_name]
 	
 	def index
@@ -82,7 +81,9 @@ class PlayController < ApplicationController
   end
   
 	def end_game
+	  
     if :s ==  @board.calculate_winner
+      user = User.new(:name => @board.user.name, :diff => @board.calculate_winner)
       @msg = "Congratulations!! You won!!"
     else
       @msg = "Sorry you lost, better luck next time"

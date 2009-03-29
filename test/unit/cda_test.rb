@@ -1,13 +1,4 @@
-require "test/unit"
 require "test_helper"
-
-require "card"
-require "player"
-require "rules"
-require "roundscore"
-require "currentcards"
-require "scorecard"
-require "cda"
 
 class TestCda < Test::Unit::TestCase
   
