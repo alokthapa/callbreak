@@ -19,13 +19,14 @@
 <body class="back">
 	<div id="doc2" class="yui-t4">
 		<div id="hd" class="outside" >
-			<span class=" y1"> Callbreak</span>&nbsp;&nbsp; a card game
+			<span class=" y1"><a href="/play/">Callbreak</span>&nbsp;&nbsp; a card game</a>
 			<span class="notice">	<%= flash[:notice] %></span>
 		</div>
 		<div id="bd" class="inside">
 			<%= yield %>
 		</div>
 		<div id="ft" class="outside" >
+			<a href="/play">Home</a> |  <a href="/user">Top Ten</a> |
 			<a href="http://www.cdadar.com/2/post/2009/03/callbreak.html">Feedback</a> | <a href="/play/about">About</a> 
 		</div>
 	</div>

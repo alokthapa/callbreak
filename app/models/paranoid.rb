@@ -13,7 +13,9 @@ class Paranoid < Player
   end
 
  def get_card(ccards)
-    Rules.valid_moves(@cards, ccards.get_cards).sort_by{rand}.pop
+    valids = Rules.valid_moves(@cards, ccards.get_cards)
+    valids.each{ |card| puts "valid move card #{card}" }
+    valids.sort_by{rand}.pop
  end
  
  def get_called_points  

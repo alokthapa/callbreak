@@ -81,9 +81,9 @@ class PlayController < ApplicationController
   end
   
 	def end_game
-	  
     if :s ==  @board.calculate_winner
-      user = User.new(:name => @board.user.name, :diff => @board.calculate_winner)
+      user = User.new(:name => @board.user.name, :diff => @board.calculate_win_diff).save
+      
       @msg = "Congratulations!! You won!!"
     else
       @msg = "Sorry you lost, better luck next time"

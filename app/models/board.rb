@@ -78,7 +78,7 @@ class Board
       scores[d] = @scorecard.get_scorecard(d)
     end
     scores = scores.sort{ |a, b| a[1] <=> b[1]}
-    scores.last[0] - scores[-1][0]
+    scores.last[1] - scores[-2][1]
   end
   
   def calculate_winner
@@ -91,7 +91,7 @@ class Board
   
   
   def robot_move(dir)
-    move(dir, players[dir].get_card(current_cards)) if waiting_on == dir
+      move(dir, players[dir].get_card(current_cards.moves_left.zero? ? CurrentCards.new: current_cards)) if waiting_on == dir
   end
   
   def move(dir, card)
