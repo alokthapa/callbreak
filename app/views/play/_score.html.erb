@@ -1,0 +1,27 @@
+<span class="y2">Score</span><br/>
+<table id="score" cellspacing="5" cellpadding="5" border="1">
+	<tr>
+		<td>
+			Name
+		</td>
+		<td>
+			Called
+		</td>
+		<td>
+			Score
+		</td>
+	</tr>
+	<% round.called.each do |dir, called| %>
+	<tr>
+		<td>
+		<%= @board.players[dir].name %>
+		</td> 
+		<td>
+		 <%= round.called[dir] %> 
+		</td>
+		<td>
+		 <%= round[dir] %> 
+		</td>
+	</tr>
+	<% end %>
+</table>

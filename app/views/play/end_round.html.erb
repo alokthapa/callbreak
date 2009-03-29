@@ -1,0 +1,53 @@
+<div id="yui-main">
+	<span class="y1"><p>ScoreCard</p></span>
+	<br/>
+	<table id="score" cellspacing="5" cellpadding="5" border="1">
+		<tr>
+			<td>
+				Name
+			</td>
+			<td>
+				Called
+			</td>
+			<td>
+				Score
+			</td>
+			<td>
+				Calculated Score
+			</td>
+			<td>
+				Total Score
+			</td>
+		</tr>
+
+		<% @board.directions.each do |d|%>
+		<tr>
+			<td>
+				<%= @board.players[d].name %>
+			</td>
+			<td>
+				<%= @scorecard.current_round.called[d] %>
+			</td>
+			<td>
+				<%= @scorecard.current_round[d] %>
+			</td>
+			<td>
+				<%= @scorecard.current_round.get_score[d] %>
+			</td>
+			<td>
+				<%= @scorecard.get_scorecard(d) %>
+			</td>
+			
+		<% end %>
+	</table>
+	
+	<form action="/play/get_called_points" method="post	">
+	<span class="y2"><%= button_to "Next Round" %>  
+	</span>
+	</form>
+</div>
+<div id="yui-b">
+	<%= render :partial  => "rounds" %>
+	
+</div>
+

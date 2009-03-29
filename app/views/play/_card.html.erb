@@ -1,0 +1,14 @@
+<%if (card)%>
+	<% if (valid) %>
+			<a href="#" onclick=" <%= remote_function( :url => { :action => 'user_move', :id => card.id}) %>;;document.getElementById('turn').innerHTML='w';" class="menulink">
+	<img src='<%=  "/images/#{card.id}.gif" %>' height= '80px' width='60px' >
+			</a>
+	<% else %>
+			<img src='<%=  "/images/#{card.id}.gif" %>' height= '80px' width='60px' >
+	<% end %>
+<% else %>
+	
+<% end %>
+
+
+

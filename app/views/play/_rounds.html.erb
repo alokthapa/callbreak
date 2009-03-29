@@ -1,0 +1,30 @@
+<span class="y2">Rounds</span><br/>
+
+<table id="score" cellspacing="5" cellpadding="5" border="1">
+	<tr>
+		<td>
+			Name
+		</td>
+		<% @board.directions.each do |d|%>
+			<td>
+				<%= @board.players[d].name %>
+			</td>
+		<% end %>
+	</tr>
+
+	<% @scorecard.complete_rounds.each do |r|%>
+	<tr>
+		<td>Round <%= @scorecard.complete_rounds.index(r) + 1 %></td>
+		<% @board.directions.each do |d|%>
+		<td> <%= r.get_score[d].to_s %>  </td>
+		<%end %>
+	</tr>
+	<% end %>
+
+	<tr>
+		<td>Total</td>
+		<% @board.directions.each do |d|%>
+		<td> <%= @scorecard.get_scorecard(d).to_s %>  </td>
+		<%end %>
+	</tr>
+</table>

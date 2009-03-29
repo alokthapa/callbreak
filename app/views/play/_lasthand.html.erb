@@ -1,0 +1,31 @@
+<span class="y2">Last Hand</span><br/>
+<table border="0" cellspacing="5" cellpadding="5" style="text-align:center">
+	<tr>
+		<td></td>
+		<td> <span class="last_hand_img">
+			<%= render :partial  => "card", :object => lcards.card_for(:n), :locals => {:valid => false} %></span></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>
+			<span class="last_hand_img">
+				<%= render :partial  => "card", :object => lcards.card_for(:w), :locals => {:valid => false} %>
+			</span>
+		</td>
+		<td></td>
+		<td>
+			<span class="last_hand_img">
+				<%= render :partial  => "card", :object => lcards.card_for(:e), :locals => {:valid => false} %>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<span class="last_hand_img">
+				<%= render :partial  => "card", :object => lcards.card_for(:s) , :locals => {:valid => false}%>
+			</span>
+		</td>
+		<td></td>
+	</tr>	
+</table>

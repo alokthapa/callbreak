@@ -1,0 +1,122 @@
+*
+{
+  font-family:"lucida granda", georgia , arial, courier;
+}
+
+.outside
+{
+  color:#FFFFFF;
+}
+
+.y1{
+  font-size:397%;
+}
+
+.y2
+{
+  font-size: 167%;
+  padding:2px;
+}
+
+.y3
+{
+  font-size: 138.5%;
+  padding:2px;
+}
+
+.outside a
+{
+	text-decoration:none;
+	color:#ffffff;
+}
+
+.inside a
+{
+	text-decoration:none;
+	color:#bbbbbb;
+}
+
+.list li{
+  list-style-type:disc;
+  padding:2px;
+}
+
+.disp_table
+{
+  text-align:center;
+  width:550px;
+}
+
+.first, .third
+{
+  width:250px;
+}
+
+.second
+{
+  width:300px;
+}
+
+.disp_table td
+{
+  vertical-align:top;
+}
+
+.back
+{
+  background-color:#2C4762;
+}
+
+.inside
+{
+  background-color:#FFFFFF;
+  color:#2D4159;
+  
+}
+
+.your_cards {
+  padding:2px;
+  margin:2px;
+  height:250px;
+}
+
+.last_hand_img img
+{
+  height:70px;
+  width:50;
+}
+
+.menulink
+{
+  text-decoration:none;
+}
+
+.menulink:hover img
+{
+  filter:alpha(opacity=70);
+  -moz-opacity:.70;
+  opacity:.70;  
+}
+
+#ft{
+  margin:20px;
+}
+
+#bd
+{
+   padding:20px;
+}
+
+#score td
+{
+  padding:5px;
+}
+
+.notice_later
+{
+  border-color:red;
+  border-style:solid;
+  padding:5px;
+  border-width:2px;
+}
+

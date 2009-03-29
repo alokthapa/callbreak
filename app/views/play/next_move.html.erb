@@ -1,0 +1,89 @@
+<div id="yui-main">		
+	<table border="0" cellspacing="5" cellpadding="5" class="disp_table" >
+		<tr style="height:150px">
+			<td class="first"></td>
+			<td class="second">
+				<span class="y2">Rob</span>
+				<br/>
+				<div id="north">
+					<%= render :partial  => "card", :object => @board.current_cards.card_for(:n) %>
+				</div>
+				</td>
+			<td class="third"></td>
+		</tr>
+		<tr style="height:150px">
+			<td >
+				<span class="y2">Bob</span>
+				<br/>
+				<div id="west">
+					<%= render :partial  => "card", :object => @board.current_cards.card_for(:w) %>
+				</div>
+			</td>
+			<td></td>
+			<td>
+				<span class="y2">John</span>
+				<br/>
+				<div id="east">
+					<%= render :partial  => "card", :object => @board.current_cards.card_for(:e) %>
+				</div>
+			</td>
+		</tr>
+		<tr height="50px" >
+			<td></td>
+			<td>
+				<div id="south">
+					<%= render :partial  => "card", :object => @board.current_cards.card_for(:s) %>
+				</div>
+			</td>
+			<td></td>
+		</tr>	
+	</table>	
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+<div style="text-align:center;width:500px;height:200px;">
+	<span class="y2">Your Cards</span>
+	<div id="player_cards">
+		<%= render 	:partial  => "player_cards", 
+					:locals => { :cards =>  @board.user.cards_sorted } %>
+	</div>
+</div>		
+	
+
+</div>
+<div id="yui-b">
+	<div id="turn" style="display:none">
+	</div>
+	<div id="lasthand">
+		<%= render :partial  => "lasthand", :locals => { :lcards => @board.last_hand} if @board.last_hand %>
+	</div>
+		<br/>
+	<div id ="score">
+		<%= render :partial  => "score", :locals => { :round => @scorecard.current_round } %>
+	</div>
+		<br/>
+	<div id ="rounds">
+		<%= render :partial  => "rounds", :locals => { :scard => @board.scorecard} %>
+	</div>
+	<br/>
+	<a href="/play/end_round">Next Round</a>
+	
+</div>
+
+<%= periodically_call_remote :url => {:action => 'update_waiting_on'},
+:update => 'turn', 
+:frequency => 1 %>
+
+
+<%= periodically_call_remote :url => {:action => 'update_north', :id => :n},
+:condition => "document.getElementById('turn').innerHTML=='n'",
+:frequency => 2 %>
+
+<%= periodically_call_remote :url => {:action => 'update_east', :id => :e}, 
+:condition => "document.getElementById('turn').innerHTML=='e'",
+:frequency => 2 %>
+
+<%= periodically_call_remote :url => {:action => 'update_west', :id => :w}, 
+:condition => "document.getElementById('turn').innerHTML=='w'",
+:frequency => 2 %>

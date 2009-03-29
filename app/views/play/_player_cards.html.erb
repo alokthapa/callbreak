@@ -1,0 +1,9 @@
+	<% for card in cards %>
+		<%= render 	:partial  => "card", 
+					:object => card, 
+					:locals => {
+						:valid => @board.waiting_on == :s && 
+								  (@board.current_cards.moves_left.zero? ||
+									Rules.valid_moves(cards,
+										@board.current_cards.get_cards ).include?(card)) }%>
+	<% end %>

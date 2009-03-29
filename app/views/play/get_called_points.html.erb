@@ -1,0 +1,46 @@
+<div id="yui-main">		
+		<table border="0" cellspacing="5" cellpadding="5" class="disp_table" >
+			<tr style="height:150px">
+				<td></td>
+				<td><span class="y2">Rob</span><br/>
+				<span class="y1"><%= @roundscore.called[:n] %></span>
+				</td>
+				<td></td>
+			</tr>
+			<tr style="height:150px">
+				<td ><span class="y2"> Bob</span><br/>
+				<span class="y1"><%= @roundscore.called[:w] %></span>
+				</td>
+				<td></td>
+				<td><span class="y2">John</span><br/>
+				<span class="y1"><%= @roundscore.called[:e] %></span>
+				</td>
+			</tr>
+			<tr >
+				<td></td>
+				<td>
+					<form action="/play/start_round" method="post">
+					<span class="y2">Your call:	&nbsp;&nbsp;&nbsp;
+					<select id="called_points" name="called_points">
+						<% (1..13).each do |i| %>
+						<option><%= i %></option>
+						<% end -%>
+
+					</select> 
+					<br/>
+					<%= button_to "Start"%></span>
+					</form>
+					<br/>
+					<%= render(:partial => "cards", :object => @player.cards_sorted, :locals => { :valid => false}) %>
+				</td>
+				<td></td>
+				
+			</tr>	
+		</table>
+</div>
+<div id="yui-b">
+	<div id ="rounds">
+		<%= render :partial  => "rounds", :locals => { :scard => @board.scorecard} %>
+	</div>
+	
+</div>
