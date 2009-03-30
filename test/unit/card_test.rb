@@ -6,7 +6,7 @@ class TestCard < Test::Unit::TestCase
   def Card.suits
     [:Hearts, :Diamonds, :Spades,:Clubs]
   end
-  
+
   def test_fromid
     assert_equal(Card.new(:Hearts, :A), Card.from_id(0))
     assert_equal(Card.from_id(1) ,Card.new(:Hearts, :K))

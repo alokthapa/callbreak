@@ -107,7 +107,7 @@
    padding:20px;
 }
 
-#score td
+#score td, #topten td
 {
   padding:5px;
 }

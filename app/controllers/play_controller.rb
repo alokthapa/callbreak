@@ -19,6 +19,7 @@ class PlayController < ApplicationController
   end
 	
 	def get_name
+    @users = User.find(:all, :order => "diff DESC, name", :limit => 10)
 	end
 	
 	def about
@@ -80,13 +81,26 @@ class PlayController < ApplicationController
     end
   end
   
+  def end_game_before
+    user = User.new(:name => @board.user.name, :diff => @board.calculate_win_diff)
+    if :s == @board.calculate_winner && user.top_ten?
+      user.save
+    end
+    redirect_to :action => "end_game"
+  end
+  
 	def end_game
+	  @users = User.find(:all, :order => "diff DESC, name", :limit => 10)
+	  user = User.new(:name => @board.user.name, :diff => @board.calculate_win_diff)
     if :s ==  @board.calculate_winner
-      user = User.new(:name => @board.user.name, :diff => @board.calculate_win_diff).save
+      if(user.top_ten?)
+        @msg = "Congratulations!! You made it to the Top Ten List!!"
+      else
+        @msg = "Congratulations!! You own but you missed the Top Ten List."
+      end
       
-      @msg = "Congratulations!! You won!!"
     else
-      @msg = "Sorry you lost, better luck next time"
+      @msg = "Sorry you didn't win, better luck next time!"
     end
   end
   
@@ -102,7 +116,7 @@ class PlayController < ApplicationController
 	end
 	
 	def end_round
-		redirect_to :action => "end_game" if  @scorecard.rounds == 5
+		redirect_to :action => "end_game_before" if  @scorecard.rounds == 5
 	end
 	
   def debug

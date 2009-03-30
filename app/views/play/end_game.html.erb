@@ -1,7 +1,9 @@
 <div id="yui-main">
-	<%= @diff%>
 	<span class="y1"><p>ScoreCard</p></span>
+
 	<br/>
+	<span class="y2"><%= @msg %></span>
+	
 	<table id="score" cellspacing="5" cellpadding="5" border="1">
 		<tr>
 			<td>
@@ -42,9 +44,9 @@
 		<% end %>
 	</table>
 	
-	<span class="y2">
-	  <%= @msg %>
-	</span>
+	<br/>
+	<%= render :partial => "top_list"  %>
+	
 	<form action="/play/reset_game" method="post">
 	<span class="y2">
 	<br/>

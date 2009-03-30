@@ -18,7 +18,6 @@ class Player
   end
     
   def register_move(dir, card)
-    
   end
 
   def register_end_hand(ccards)
@@ -42,8 +41,9 @@ class Player
   def get_card(ccards)
   end
   
-  def need_redeal?      
-    return false 
+  def need_redeal?   
+    true unless @cards.any?{ |card| card.of_suit?(Rules.WinSuit)} &&
+                @cards.any?{ |card| card.higher_order_than(Card.new(card.suit,10))}
   end
   
   def empty_cards

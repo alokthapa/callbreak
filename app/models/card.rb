@@ -51,6 +51,4 @@ class Card
      Card.values.index(@value) < Card.values.index(other.value)
   end
 
-  
-  
 end
