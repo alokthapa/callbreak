@@ -94,11 +94,10 @@ class PlayController < ApplicationController
 	  user = User.new(:name => @board.user.name, :diff => @board.calculate_win_diff)
     if :s ==  @board.calculate_winner
       if(user.top_ten?)
-        @msg = "Congratulations!! You made it to the Top Ten List!!"
+        @msg = "Congratulations!! You made it to the Top Ten List!! Your winning difference was #{@board.calculate_win_diff}."
       else
         @msg = "Congratulations!! You won but you missed the Top Ten List."
       end
-      
     else
       @msg = "Sorry you didn't win, better luck next time!"
     end

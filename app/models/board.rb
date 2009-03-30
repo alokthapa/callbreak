@@ -94,6 +94,7 @@ class Board
       move(dir, players[dir].get_card(current_cards.moves_left.zero? ? CurrentCards.new: current_cards)) if waiting_on == dir
   end
   
+  
   def move(dir, card)
     puts ".....starting move......."
     puts "#{dir} has cards"
@@ -108,6 +109,7 @@ class Board
     end
     #verify turn 
     if waiting_on == dir
+      update_waiting_on :none
       puts "yes we were waiting on you... "
       #add move
       current_cards.add dir, card
@@ -115,15 +117,14 @@ class Board
       if current_cards.moves_left.zero?
         win = current_cards.calculate_hand_winner
         @scorecard.current_round.add_one(win)
-        update_waiting_on win
         tell_end_hand current_cards
+        update_waiting_on win
       else
         update_waiting_on next_player(dir)
       end
       @players[dir].cards.delete(card)
     else
       puts "it's not your time yet chump.... "
-      
     end
     
     puts ".....ending move......."
