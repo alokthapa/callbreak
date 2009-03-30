@@ -96,7 +96,7 @@ class PlayController < ApplicationController
       if(user.top_ten?)
         @msg = "Congratulations!! You made it to the Top Ten List!!"
       else
-        @msg = "Congratulations!! You own but you missed the Top Ten List."
+        @msg = "Congratulations!! You won but you missed the Top Ten List."
       end
       
     else
