@@ -8,7 +8,6 @@ class Rules
   def Rules.beats?(a, b, fst=nil)
     true if Rules.beats(a, b, fst) == a
     false
-    
   end
   
   def Rules.beats(a, b, fst=nil)
@@ -27,6 +26,10 @@ class Rules
     elsif b.same_suit? fst  
       b
     end
+  end
+  
+  def Rules.beats_all?(card, cards)
+    card == Rules.beats_all(cards+[card])
   end
   
   def Rules.beats_all(cards)

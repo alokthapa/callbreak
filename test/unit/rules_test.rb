@@ -24,6 +24,14 @@ class TestAppModelsRules < Test::Unit::TestCase
     assert_equal(Card.new(:Clubs, 2),Rules.beats(Card.new(:Hearts, 5), Card.new(:Clubs, 2), Card.new(:Clubs, 5)))
   end
   
+  def test_beats_all?
+  
+    assert(Rules.beats_all?(Card.new(:Hearts, :A), [Card.new(:Hearts, :J), Card.new(:Clubs, 2)]), "Failure message.")
+    
+    assert(Rules.beats_all?(Card.new(:Hearts, :J), [Card.new(:Hearts, 2), Card.new(:Clubs, 5), Card.new(:Diamond, 10)]), "fail")
+    
+  end
+  
   def test_beats_all
 
     #simple
