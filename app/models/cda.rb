@@ -1,13 +1,18 @@
 #the card domain analyzer....
 class Cda
 
-  attr_reader :dir, :ds
+  attr_reader :dir
+  
   def directions
     [:n, :s, :w, :e]
   end
   
   def others
     [:n, :s, :w, :e] - [@dir] 
+  end
+  
+  def get_tags(card)
+    @ds[card.id]
   end
   
   def initialize(dir)
@@ -19,6 +24,9 @@ class Cda
     end
   end
   
+  def add_played_ccards(ccards)
+    directions.each{|d| add_played(d, ccards.card_for(d))}
+  end
   
   def add_player(card)
     @ds[card.id] = [@dir]
@@ -28,8 +36,8 @@ class Cda
     @ds[card.id] = [:played, dir]
   end
   
-  def remove_dir(dir, card)
-    @ds[card.id].delete(dir)
+  def remove_tag(tag, card)
+    @ds[card.id].delete(tag)
   end
   
   #refactor later to utilities

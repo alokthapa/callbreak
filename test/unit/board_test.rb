@@ -12,12 +12,7 @@ class TestBoard < Test::Unit::TestCase
    assert_equal(4, board.players.values.length)
    assert_equal(13,board.players.values[0].cards.length)
  end
- 
- def test_introduce_players
-   board = Board.new("alok")
-   board.introduce_players
- end
- 
+  
   def test_setup_other_tricks
     board = Board.new("alok")
     board.setup_other_tricks
