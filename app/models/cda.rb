@@ -40,13 +40,15 @@ class Cda
   def get_cards_till(card, cards)
     cards[0..cards.index(card)]
   end
-  
+
+
 # Three Rules
 # 1. if card.suit not_equal first.suit, no cards of suit first.suit
 # 2. if card, first, win of same suit, win> card, no cards greater than win
 # 3. if first not spades, win is spades and card not first.suit, no spades greater than win
    
   def update_tags(ccards)
+    tag_played_ccards(ccards)
     if ccards.count > 0
       fcard = ccards.card_for(ccards.get_dirs.first)
       
@@ -77,6 +79,10 @@ class Cda
     @ds[card.id] = [@dir]
   end
   
+  def tag_player_cards(cards)
+    cards.each{|c| tag_player_card c}
+  end
+  
   def tag_played_card(dir, card)
     @ds[card.id] = [:played, dir]
   end
@@ -96,6 +102,36 @@ class Cda
   def all_cards_of_suit(suit)
     Card.values.map{|value| Card.new(suit, value)}
   end
-    
   
+  def make_cards_from_pairs(pairs)
+    pairs.map{|pair| Card.from_id(pair[0])}
+  end
+  
+  def only_for(dir)
+    make_cards_from_pairs @ds.select{|k, v| v == [dir]}
+  end
+  
+  def combination(cards, r, without=[])
+    cards.select{|c| !without.include?(c)}.sort_by{rand}[0...r]
+  end
+  
+  def maybe(dir)
+    make_cards_from_pairs @ds.select{|k,v| v.include?(dir) && !v.include?(:played)}
+  end
+  
+  def generate_domain_model(length)
+    ans = {}
+    used = []
+    rand_others = others.sort_by{rand}
+    rand_others.each do |d|
+      cards = only_for(d)
+      if length > cards.length
+        need_more = length - cards.length
+        cards += combination(maybe(d), need_more, used)
+      end
+      ans[d] = cards
+      cards.each{|c| used << c }  
+    end
+    ans
+  end
  end

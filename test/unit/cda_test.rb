@@ -168,7 +168,96 @@ class TestCda < Test::Unit::TestCase
     assert_equal(false, cda.get_tags(Card.new(:Spades, :K)).include?(:w))
     assert_equal(false, cda.get_tags(Card.new(:Spades, :A)).include?(:w))
     
+  end
+  
+  def test_make_cards_from_pairs
+    cda = Cda.new(:n)
     
+    assert(cda.make_cards_from_pairs([0, [:n], [1, [:n, :w]]]).include?(Card.from_id(0)), "Failure message.")
+    
+    assert(cda.make_cards_from_pairs([0, [:n], [1, [:n, :w]]]).include?(Card.from_id(1)), "Failure message.")
+  end
+  
+  def test_get_only
+    cda = Cda.new(:n)
+    cda.tag_player_card(Card.new(:Spades, :A))
+    assert(cda.only_for(:n).include?(Card.new(:Spades, :A)), "Failure message.")
+    
+    ccards = CurrentCards.new.add(:s, Card.new(:Hearts, :K)).
+                              add(:w, Card.new(:Hearts, 10)).
+                              add(:n, Card.new(:Hearts, 8)).
+                              add(:e, Card.new(:Hearts, 2))
+    cda.update_tags(ccards)
+
+    assert(cda.only_for(:s).include?(Card.new(:Hearts, :A)), "Failure message.")
+  end
+  
+  def test_combination
+    cda = Cda.new(:n)
+    assert_equal(2, cda.combination([Card.from_id(1),Card.from_id(2),Card.from_id(3),Card.from_id(4)], 2).length)
+    assert_equal(2, cda.combination([Card.from_id(1),Card.from_id(2),Card.from_id(3),Card.from_id(4)], 2, [Card.from_id(1)]).length)
+    
+    assert_equal(false, cda.combination([Card.from_id(1),Card.from_id(2),Card.from_id(3),Card.from_id(4)], 2, [Card.from_id(1)]).include?(Card.from_id(1)))
+  end
+
+  def test_maybe
+    cda = Cda.new(:n)
+    cda.tag_player_card(Card.new(:Spades, :A))
+    assert(cda.maybe(:n).include?(Card.new(:Hearts, :A)), "Failure message.")
+    assert(!cda.maybe(:s).include?(Card.new(:Spades, :A)), "Failure message.")
+    
+    cda.tag_played_card(:s, Card.new(:Spades, :K))
+    assert_equal(false,cda.maybe(:n).include?(Card.new(:Spades, :K)))
+    
+    
+  end
+  
+  def test_tag_player_cards
+    cda = Cda.new(:n)
+    cda.tag_player_cards([Card.from_id(0),Card.from_id(1),Card.from_id(2)])
+    assert(cda.only_for(:n).include?(Card.from_id(0)), "fail")
+    assert(cda.only_for(:n).include?(Card.from_id(1)), "fail")
+    assert(cda.only_for(:n).include?(Card.from_id(2)), "fail")
+    
+  end
+  
+  def test_generate_model_not_include_player_cards
+
+    cda = Cda.new(:n)
+    cda.tag_player_cards((0..12).map{|id| Card.from_id(id)})
+    gmodel = cda.generate_domain_model(13)
+    
+    assert(!gmodel[:s].include?(Card.from_id(0)), "Failure message.")
+    assert(!gmodel[:e].include?(Card.from_id(0)), "Failure message.")
+    assert(!gmodel[:w].include?(Card.from_id(0)), "Failure message.")
+  end
+  
+  def test_generate_model_length_eq
+    cda = Cda.new(:n)
+    gmodel = cda.generate_domain_model(13)
+    assert_equal(13,gmodel[:s].length)
+    assert_equal(13,gmodel[:w].length)
+    assert_equal(13,gmodel[:e].length)
+  end
+  
+  def test_generate_model_only_for
+    cda = Cda.new(:n)
+    ccards = CurrentCards.new.add(:s, Card.new(:Hearts, :K)).
+                              add(:w, Card.new(:Hearts, 10)).
+                              add(:n, Card.new(:Hearts, 8)).
+                              add(:e, Card.new(:Hearts, 2))
+    cda.update_tags(ccards)
+    gmodel = cda.generate_domain_model(13)
+    assert(gmodel[:s].include?(Card.new(:Hearts, :A)) ,"fail")
+    assert(!gmodel[:e].include?(Card.new(:Hearts, :A)),"fail")
+    assert(!gmodel[:w].include?(Card.new(:Hearts, :A)),"fail")
+    
+  end
+  
+  def test_generate_model_mutual_ex
+    cda = Cda.new(:n)
+    gmodel = cda.generate_domain_model(13)
+    assert(gmodel[:s].all?{|c| !gmodel[:e].include?(c) && !gmodel[:w].include?(c)}, "Failure message.")
   end
 
 end
