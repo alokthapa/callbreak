@@ -130,7 +130,8 @@ class TestCda < Test::Unit::TestCase
 
  def test_get_current_winner
    cda = Cda.new(:n)
-   ccards = CurrentCards.new.add(:s, Card.new(:Hearts, 2)).
+   ccards = CurrentCards.new
+   ccards.add(:s, Card.new(:Hearts, 2)).
                              add(:w, Card.new(:Hearts, :J)).
                              add(:n, Card.new(:Hearts, 4))
    assert_equal(Card.new(:Hearts, :J), 
@@ -139,15 +140,16 @@ class TestCda < Test::Unit::TestCase
 
   def test_update_no_higher_than
     cda = Cda.new(:n)
-    ccards = CurrentCards.new.add(:e, Card.new(:Hearts, 2)).
+    ccards = CurrentCards.new
+    ccards.add(:e, Card.new(:Hearts, 2)).
                               add(:s, Card.new(:Hearts, :J)).
                               add(:w, Card.new(:Hearts, 4))
                               
     cda.update_tags(ccards)
     
-    assert_equal(false, cda.get_tags(Card.new(:Hearts, :Q)).include?(:s))
-    assert_equal(false, cda.get_tags(Card.new(:Hearts, :K)).include?(:s))
-    assert_equal(false, cda.get_tags(Card.new(:Hearts, :A)).include?(:s))
+    assert_equal(false, cda.get_tags(Card.new(:Hearts, :Q)).include?(:w))
+    assert_equal(false, cda.get_tags(Card.new(:Hearts, :K)).include?(:w))
+    assert_equal(false, cda.get_tags(Card.new(:Hearts, :A)).include?(:w))
   end
 
 end

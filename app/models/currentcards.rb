@@ -1,7 +1,7 @@
 
 class CurrentCards
   
-  def initialize()
+  def initialize
     @ccards = []
   end
   
