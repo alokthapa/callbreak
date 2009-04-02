@@ -5,7 +5,7 @@ class Card
   attr_reader :suit, :value, :id
 
   def Card.suits
-    [ :Hearts, :Clubs, :Diamond, :Spades]
+    [ :Hearts,:Clubs, :Diamonds, :Spades]
   end
   
   def Card.values

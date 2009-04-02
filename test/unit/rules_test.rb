@@ -38,7 +38,7 @@ class TestAppModelsRules < Test::Unit::TestCase
   
     assert(Rules.beats_all?(Card.new(:Hearts, :A), [Card.new(:Hearts, :J), Card.new(:Clubs, 2)]), "Failure message.")
     
-    assert(Rules.beats_all?(Card.new(:Hearts, :J), [Card.new(:Hearts, 2), Card.new(:Clubs, 5), Card.new(:Diamond, 10)]), "fail")
+    assert(Rules.beats_all?(Card.new(:Hearts, :J), [Card.new(:Hearts, 2), Card.new(:Clubs, 5), Card.new(:Diamonds, 10)]), "fail")
     
   end
   
@@ -53,34 +53,34 @@ class TestAppModelsRules < Test::Unit::TestCase
     assert_equal(Card.new(:Spades, 3), Rules.beats_all([Card.new(:Hearts, :A), Card.new(:Spades, 3), Card.new(:Clubs, :J)]))
     
     #requires first suit
-    assert_equal(Card.new(:Hearts, :J), Rules.beats_all([Card.new(:Hearts, 2), Card.new(:Clubs, 5), Card.new(:Hearts, :J), Card.new(:Diamond, 10)]))
+    assert_equal(Card.new(:Hearts, :J), Rules.beats_all([Card.new(:Hearts, 2), Card.new(:Clubs, 5), Card.new(:Hearts, :J), Card.new(:Diamonds, 10)]))
   end
   
   def test_valid_moves
 
     #empty pcards
-    assert_equal([Card.new(:Diamond, :A), Card.new(:Hearts, 10)], Rules.valid_moves([Card.new(:Diamond, :A), Card.new(:Hearts, 10)], []))
+    assert_equal([Card.new(:Diamonds, :A), Card.new(:Hearts, 10)], Rules.valid_moves([Card.new(:Diamonds, :A), Card.new(:Hearts, 10)], []))
   
     #no cards of given suit
-    assert_equal([Card.new(:Diamond, :A), Card.new(:Hearts, 10)], Rules.valid_moves([Card.new(:Diamond, :A), Card.new(:Hearts, 10)], [Card.new(:Clubs, 10)]))
+    assert_equal([Card.new(:Diamonds, :A), Card.new(:Hearts, 10)], Rules.valid_moves([Card.new(:Diamonds, :A), Card.new(:Hearts, 10)], [Card.new(:Clubs, 10)]))
     
     #cards of given suit of higher order exists
-    assert_equal([Card.new(:Diamond, :A), Card.new(:Diamond, :K)], Rules.valid_moves([Card.new(:Diamond,:A), Card.new(:Hearts, 10), Card.new(:Diamond, :K)], [Card.new(:Diamond, 10)]))
+    assert_equal([Card.new(:Diamonds, :A), Card.new(:Diamonds, :K)], Rules.valid_moves([Card.new(:Diamonds,:A), Card.new(:Hearts, 10), Card.new(:Diamonds, :K)], [Card.new(:Diamonds, 10)]))
     
     #cards of given suit of lower order exists
-    assert_equal([Card.new(:Diamond, 2), Card.new(:Diamond, 3)], Rules.valid_moves([Card.new(:Diamond, 2), Card.new(:Hearts, 10), Card.new(:Diamond, 3)], [Card.new(:Diamond, 10)]))
+    assert_equal([Card.new(:Diamonds, 2), Card.new(:Diamonds, 3)], Rules.valid_moves([Card.new(:Diamonds, 2), Card.new(:Hearts, 10), Card.new(:Diamonds, 3)], [Card.new(:Diamonds, 10)]))
 
     #no cards of given first suit, but have winsuit cards
-    assert_equal([Card.new(:Spades, :A), Card.new(:Spades, 10)],Rules.valid_moves([Card.new(:Diamond, :A), Card.new(:Spades, :A), Card.new(:Spades, 10), Card.new(:Hearts, 10)], [Card.new(:Clubs, 10)]))
+    assert_equal([Card.new(:Spades, :A), Card.new(:Spades, 10)],Rules.valid_moves([Card.new(:Diamonds, :A), Card.new(:Spades, :A), Card.new(:Spades, 10), Card.new(:Hearts, 10)], [Card.new(:Clubs, 10)]))
     
     #no cards of given first suit and sb else played winsuit, have winsuit that wins
-    assert_equal([Card.new(:Spades, :A)],Rules.valid_moves([Card.new(:Diamond, :A), Card.new(:Spades, :A), Card.new(:Spades, 2), Card.new(:Hearts, 10)], [Card.new(:Clubs, 10), Card.new(:Spades, 9)]))
+    assert_equal([Card.new(:Spades, :A)],Rules.valid_moves([Card.new(:Diamonds, :A), Card.new(:Spades, :A), Card.new(:Spades, 2), Card.new(:Hearts, 10)], [Card.new(:Clubs, 10), Card.new(:Spades, 9)]))
     
     #no cards of given first suit and sb else played winsuit, no winsuit that wins, 
-    assert_equal( [ Card.new(:Diamond, :A), 
+    assert_equal( [ Card.new(:Diamonds, :A), 
                     Card.new(:Spades, 2), 
                     Card.new(:Hearts, 10)],
-                    Rules.valid_moves([ Card.new(:Diamond, :A), 
+                    Rules.valid_moves([ Card.new(:Diamonds, :A), 
                                         Card.new(:Spades, 2), 
                                         Card.new(:Hearts, 10)], 
                                       [ Card.new(:Clubs, 10), 
@@ -88,7 +88,7 @@ class TestAppModelsRules < Test::Unit::TestCase
     
 
     #no cards of given suit or winsuit
-    assert_equal([Card.new(:Diamond, :A), Card.new(:Hearts, :A), Card.new(:Hearts, 10) ], Rules.valid_moves([Card.new(:Diamond, :A), Card.new(:Hearts, :A), Card.new(:Hearts, 10) ], [Card.new(:Clubs, 10)]))
+    assert_equal([Card.new(:Diamonds, :A), Card.new(:Hearts, :A), Card.new(:Hearts, 10) ], Rules.valid_moves([Card.new(:Diamonds, :A), Card.new(:Hearts, :A), Card.new(:Hearts, 10) ], [Card.new(:Clubs, 10)]))
 
     #no cards of given suit or winsuit
     assert_equal([Card.new(:Clubs, 10), Card.new(:Clubs, 9), Card.new(:Clubs, 2) ], 
@@ -97,8 +97,8 @@ class TestAppModelsRules < Test::Unit::TestCase
     #winsuit game
     assert_equal([Card.new(:Spades, 7), Card.new(:Spades, 5), Card.new(:Spades, 2) ], 
     Rules.valid_moves(
-    [ Card.new(:Diamond, 5),Card.new(:Diamond, 2), Card.new(:Spades, 7), Card.new(:Spades, 5), Card.new(:Spades, 2) ], 
-    [Card.new(:Spades, :A),Card.new(:Diamond, :K), Card.new(:Hearts, 2)]))
+    [ Card.new(:Diamonds, 5),Card.new(:Diamonds, 2), Card.new(:Spades, 7), Card.new(:Spades, 5), Card.new(:Spades, 2) ], 
+    [Card.new(:Spades, :A),Card.new(:Diamonds, :K), Card.new(:Hearts, 2)]))
 
     assert_equal([Card.new(:Spades, 7), Card.new(:Spades, 6), Card.new(:Spades, 2) ], 
     Rules.valid_moves(

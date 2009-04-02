@@ -40,10 +40,10 @@ class TestAppModelsCurrentcards < Test::Unit::TestCase
 
    ccards.add(:n, Card.new(:Spades, :A)).
           add(:e, Card.new(:Spades, 10)).
-          add(:s, Card.new(:Diamond, 5)).
+          add(:s, Card.new(:Diamonds, 5)).
           add(:w, Card.new(:Clubs, 9))
   assert_equal([ Card.new(:Spades, :A), Card.new(:Spades, 10), 
-                 Card.new(:Diamond, 5), Card.new(:Clubs, 9) ], ccards.get_cards)
+                 Card.new(:Diamonds, 5), Card.new(:Clubs, 9) ], ccards.get_cards)
  end
  
  
@@ -52,7 +52,7 @@ class TestAppModelsCurrentcards < Test::Unit::TestCase
 
    ccards.add(:n, Card.new(:Spades, :A)).
           add(:e, Card.new(:Spades, 10)).
-          add(:s, Card.new(:Diamond, 5)).
+          add(:s, Card.new(:Diamonds, 5)).
           add(:w, Card.new(:Clubs, 9))
           
   assert_equal(:n, ccards.calculate_hand_winner)

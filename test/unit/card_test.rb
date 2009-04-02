@@ -3,26 +3,6 @@ require "test_helper"
 class TestCard < Test::Unit::TestCase
  include Cardutility
  
-  def Card.suits
-    [:Hearts, :Diamonds, :Spades,:Clubs]
-  end
-
-  def test_fromid
-    assert_equal(Card.new(:Hearts, :A), Card.from_id(0))
-    assert_equal(Card.from_id(1) ,Card.new(:Hearts, :K))
-    assert_equal(Card.from_id(13),Card.new(:Diamonds, :A))
-    assert_equal(Card.from_id(26),Card.new(:Spades, :A))
-    assert_equal(Card.from_id(39),Card.new(:Clubs, :A))
-  end
-  
- def test_id
-   assert_equal(0,Card.new(:Hearts, :A).id)
-   assert_equal(1,Card.new(:Hearts, :K).id)
-   assert_equal(13,Card.new(:Diamonds, :A).id)
-   assert_equal(26,Card.new(:Spades, :A).id)
-   assert_equal(39,Card.new(:Clubs, :A).id)
- end
- 
  def test_initialize
    card = Card.new(:Spades, :A)
    assert_equal(:Spades, card.suit)
