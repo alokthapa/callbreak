@@ -151,5 +151,24 @@ class TestCda < Test::Unit::TestCase
     assert_equal(false, cda.get_tags(Card.new(:Hearts, :K)).include?(:w))
     assert_equal(false, cda.get_tags(Card.new(:Hearts, :A)).include?(:w))
   end
+  
+  def test_update_no_spades_higher_than
+    cda = Cda.new(:n)
+    ccards = CurrentCards.new
+    ccards.add(:e, Card.new(:Hearts, 2)).
+                              add(:s, Card.new(:Spades, :J)).
+                              add(:w, Card.new(:Clubs, 4))
+                              
+    cda.update_tags(ccards)
+    
+    #no cards of first suit
+    assert_equal(false, cda.get_tags(Card.new(:Hearts, 4)).include?(:w))
+    assert_equal(false, cda.get_tags(Card.new(:Hearts, 5)).include?(:w))
+    assert_equal(false, cda.get_tags(Card.new(:Spades, :Q)).include?(:w))
+    assert_equal(false, cda.get_tags(Card.new(:Spades, :K)).include?(:w))
+    assert_equal(false, cda.get_tags(Card.new(:Spades, :A)).include?(:w))
+    
+    
+  end
 
 end

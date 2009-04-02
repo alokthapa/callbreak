@@ -61,6 +61,10 @@ class Cda
         if(card.same_suit?(fcard) && card.same_suit?(win) && win.higher_order_than(card))
             remove_tags(dir, cards_higher_than(win))
         end
+        
+        if(!fcard.of_suit?(Rules.WinSuit) && win.of_suit?(Rules.WinSuit) && !card.same_suit?(fcard))
+          remove_tags(dir, cards_higher_than(win))
+        end
       end
     end
   end
