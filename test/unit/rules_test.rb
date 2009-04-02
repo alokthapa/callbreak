@@ -12,12 +12,22 @@ class TestAppModelsRules < Test::Unit::TestCase
 
   def test_beats
     #same suit
-    assert_equal(Card.new(:Hearts, :A),Rules.beats(Card.new(:Hearts, :A), Card.new(:Hearts, :J)))
-    assert_equal(Card.new(:Hearts, :J), Rules.beats( Card.new(:Hearts, 5), Card.new(:Hearts, :J)))
+    assert_equal( Card.new(:Hearts, :A),
+                  Rules.beats(Card.new(:Hearts, :A), 
+                            Card.new(:Hearts, :J)))
+                            
+    assert_equal( Card.new(:Hearts, :J), 
+                  Rules.beats(Card.new(:Hearts, 5), 
+                              Card.new(:Hearts, :J)))
         
     #of winsuit
-    assert_equal(Card.new(:Spades, 4), Rules.beats(Card.new(:Spades, 4), Card.new(:Hearts, 3)))
-    assert_equal(Card.new(:Spades, 4), Rules.beats(Card.new(:Hearts, 3), Card.new(:Spades, 4)))
+    assert_equal( Card.new(:Spades, 4), 
+                  Rules.beats(Card.new(:Spades, 4), 
+                              Card.new(:Hearts, 3)))
+                              
+    assert_equal( Card.new(:Spades, 4), 
+                  Rules.beats(Card.new(:Hearts, 3), 
+                              Card.new(:Spades, 4)))
 
     #different suit
     assert_equal(Card.new(:Hearts, 5), Rules.beats(Card.new(:Hearts, 5), Card.new(:Clubs, 10), Card.new(:Hearts, 3)))
@@ -62,6 +72,20 @@ class TestAppModelsRules < Test::Unit::TestCase
 
     #no cards of given first suit, but have winsuit cards
     assert_equal([Card.new(:Spades, :A), Card.new(:Spades, 10)],Rules.valid_moves([Card.new(:Diamond, :A), Card.new(:Spades, :A), Card.new(:Spades, 10), Card.new(:Hearts, 10)], [Card.new(:Clubs, 10)]))
+    
+    #no cards of given first suit and sb else played winsuit, have winsuit that wins
+    assert_equal([Card.new(:Spades, :A)],Rules.valid_moves([Card.new(:Diamond, :A), Card.new(:Spades, :A), Card.new(:Spades, 2), Card.new(:Hearts, 10)], [Card.new(:Clubs, 10), Card.new(:Spades, 9)]))
+    
+    #no cards of given first suit and sb else played winsuit, no winsuit that wins, 
+    assert_equal( [ Card.new(:Diamond, :A), 
+                    Card.new(:Spades, 2), 
+                    Card.new(:Hearts, 10)],
+                    Rules.valid_moves([ Card.new(:Diamond, :A), 
+                                        Card.new(:Spades, 2), 
+                                        Card.new(:Hearts, 10)], 
+                                      [ Card.new(:Clubs, 10), 
+                                        Card.new(:Spades, 9)]))
+    
 
     #no cards of given suit or winsuit
     assert_equal([Card.new(:Diamond, :A), Card.new(:Hearts, :A), Card.new(:Hearts, 10) ], Rules.valid_moves([Card.new(:Diamond, :A), Card.new(:Hearts, :A), Card.new(:Hearts, 10) ], [Card.new(:Clubs, 10)]))
@@ -86,7 +110,7 @@ class TestAppModelsRules < Test::Unit::TestCase
      Rules.valid_moves(
      [ Card.new(:Spades, 7),Card.new(:Spades, 6), Card.new(:Spades, 2), Card.new(:Hearts, 5), Card.new(:Clubs, :Q), Card.new(:Clubs, 2) ], 
      [Card.new(:Clubs, 4),Card.new(:Spades, :Q), Card.new(:Clubs, :J)]))
-     
+
     #winsuit game, have winning and losing too, should only return winning
     assert_equal([Card.new(:Spades, :A), Card.new(:Spades, :Q)], 
       Rules.valid_moves(

@@ -18,7 +18,7 @@ class Rules
         b
       end
     elsif a.of_suit? Rules.WinSuit 
-       a
+      a
     elsif b.of_suit? Rules.WinSuit 
       b
     elsif a.same_suit? fst  
@@ -48,6 +48,8 @@ class Rules
         else
           Card.cards_of_suit(cards, pcards.first.suit)
         end
+      elsif !cards.select{|card| beats_all?(card, pcards)}.empty?
+        cards.select{|card| beats_all?(card, pcards)}
       else
         cards
       end

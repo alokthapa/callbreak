@@ -4,7 +4,6 @@ module Cardutility
     klass.extend ClassMethods
   end
 
-
   def suits_without_win
     Card.suits - [Rules.WinSuit]
   end
