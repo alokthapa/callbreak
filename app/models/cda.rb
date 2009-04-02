@@ -1,7 +1,17 @@
 #the card domain analyzer....
+
 class Cda
 
   attr_reader :dir
+  
+  def initialize(dir)
+    @dir = dir
+    @ds = {}
+
+    (0..51).each do |id|
+      @ds[id] = directions
+    end
+  end
   
   def directions
     [:n, :s, :w, :e]
@@ -15,45 +25,58 @@ class Cda
     @ds[card.id]
   end
   
-  def initialize(dir)
-    @dir = dir
-    @ds = {}
-
-    (0..51).each do |id|
-      @ds[id] = directions
-    end
-  end
-  
-  def add_played_ccards(ccards)
-    ccards.get_dirs.each{|d| add_played(d, ccards.card_for(d))} 
-  end
-  
-  def analyze_ccards(ccards)
-    if ccards.count> 0
-      fcard = ccards.card_for(ccards.get_dirs.first)
-      ccards.get_dirs.each do |dir|
-        card = ccards.card_for(dir)
-        unless card.same_suit?(fcard)
-          all_cards_of_suit(fcard.suit).each{|c| remove_tag(dir, c)}
-        end
-        if card.same_suit?(fcard) && fcard.higher_order_than(card)
-          cards_higher_than(fcard).each{|c| remove_tag(dir, c)}
-        end
-      end
-    end
-  end
-  
-  def add_player(card)
-    @ds[card.id] = [@dir]
-  end
-  
-  def add_played(dir, card)
-    @ds[card.id] = [:played, dir]
+  def remove_tags(tag, cards)
+    cards.each{|card| remove_tag(tag, card)}
   end
   
   def remove_tag(tag, card)
     @ds[card.id].delete(tag)
   end
+  
+  def tag_played_ccards(ccards)
+    ccards.get_dirs.each{|d| tag_played_card(d, ccards.card_for(d))} 
+  end
+  
+  def get_cards_till(card, cards)
+    cards[0..cards.index(card)]
+  end
+  
+# Three Rules
+# 1. if card.suit not_equal first.suit, no cards of suit first.suit
+# 2. if card, first, win of same suit, win> card, no cards greater than win
+# 3. if first not spades, win is spades and card not first.suit, no spades greater than win
+   
+  def update_tags(ccards)
+    if ccards.count > 0
+      fcard = ccards.card_for(ccards.get_dirs.first)
+      
+      ccards.get_dirs.each do |dir|
+        card = ccards.card_for(dir)
+        unless card.same_suit?(fcard)
+          remove_tags(dir, all_cards_of_suit(fcard.suit))
+        end
+        
+        win = get_current_winner(card, ccards)
+        
+        if(card.same_suit?(fcard) && card.same_suit?(win) && win.higher_order_than(card))
+            remove_tags(dir, cards_higher_than(win))
+        end
+      end
+    end
+  end
+  
+  def get_current_winner(card, ccards)
+    Rules.beats_all(get_cards_till(card, ccards.get_cards))
+  end
+  
+  def tag_player_card(card)
+    @ds[card.id] = [@dir]
+  end
+  
+  def tag_played_card(dir, card)
+    @ds[card.id] = [:played, dir]
+  end
+  
   
   #refactor later to utilities
   def cards_smaller_than(card)

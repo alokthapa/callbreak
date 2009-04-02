@@ -30,18 +30,10 @@ class TestBoard < Test::Unit::TestCase
   
   def test_update_waiting_on
     board = Board.new("alok")
-    assert_equal(:w, board.waiting_on)
     board.update_waiting_on :e
     assert_equal(:e, board.waiting_on)
   end
  
-  def test_waiting_on
-    board = Board.new("alok")
-    assert_equal(board.default_first_dir, board.waiting_on)
-    board.update_waiting_on :e
-    assert_equal(:e, board.waiting_on)
-    
-  end
   
   def test_next_player
     board = Board.new("alok")

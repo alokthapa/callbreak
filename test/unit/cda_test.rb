@@ -29,7 +29,6 @@ class TestCda < Test::Unit::TestCase
     cda = Cda.new(:n)
     assert_equal([], cda.cards_smaller_than(Card.new(:Hearts, 2)))
     assert(included_in?([Card.new(:Hearts,2),Card.new(:Hearts,3), Card.new(:Hearts,4)],cda.cards_smaller_than(Card.new(:Hearts, 5))), "fail")
-    
   end
   
   def test_cards_higher_than
@@ -70,23 +69,22 @@ class TestCda < Test::Unit::TestCase
                              add(:s, Card.from_id(3)).
                              add(:w, Card.from_id(4))
 
-    cda.add_played_ccards(ccards)                   
+    cda.tag_played_ccards(ccards)                   
     assert(included_in?([:played, :n], cda.get_tags(Card.from_id(1))), "Failure message.")
     assert(included_in?([:played, :e], cda.get_tags(Card.from_id(2))), "Failure message.")
     assert(included_in?([:played, :s], cda.get_tags(Card.from_id(3))), "Failure message.")
     assert(included_in?([:played, :w], cda.get_tags(Card.from_id(4))), "Failure message.")
   end
-  
 
   def test_add_player
     cda = Cda.new(:n)
-    cda.add_player(Card.from_id(1))
+    cda.tag_player_card(Card.from_id(1))
     assert_equal([:n], cda.get_tags(Card.from_id(1)))
   end
   
   def test_add_played
     cda = Cda.new(:n)
-    cda.add_played(:s, Card.from_id(1))
+    cda.tag_played_card(:s, Card.from_id(1))
     assert(included_in?([:played, :s],cda.get_tags(Card.from_id(1)) ),"fail")
   end
 
@@ -97,16 +95,59 @@ class TestCda < Test::Unit::TestCase
     assert(included_in?([:w, :e], cda.get_tags(Card.from_id(1))), "Failure message.")
   end
   
-  def test_analyze_ccards
+  def test_remove_tags
     cda = Cda.new(:n)
+    cda.remove_tags(:s, [Card.from_id(1),Card.from_id(2)] )
+    assert_equal(false,cda.get_tags(Card.from_id(1)).include?(:s))
+    assert_equal(false,cda.get_tags(Card.from_id(2)).include?(:s))
+    assert(included_in?([:w, :e], cda.get_tags(Card.from_id(1))), "Failure message.")
+    assert(included_in?([:w, :e], cda.get_tags(Card.from_id(2))), "Failure message.")
     
-    ccards = CurrentCards.new.add(:n, Card.new(:Hearts, 10)).
-                             add(:e, Card.new(:Hearts, :J)).
-                             add(:s, Card.new(:Hearts, 3))
-    cda.analyze_ccards(ccards)
-    # :s  doesn't have any card greater than J of hearts
-    assert_equal(false, cda.get_tags(Card.new(:Hearts, :A)).include?(:s), "Failure message.")
-    assert(included_in?([:e, :w, :n], cda.get_tags(Card.new(:Hearts, :A))), "Failure message.")
+  end
+  
+  
+  def test_get_cards_till
+    cda = Cda.new(:n)
+    assert_equal([  Card.new(:Hearts, 2), 
+                    Card.new(:Hearts, 3), 
+                    Card.new(:Hearts, 4)],
+                  cda.get_cards_till(Card.new(:Hearts, 4),   
+                                    [ Card.new(:Hearts, 2), 
+                                      Card.new(:Hearts, 3), 
+                                      Card.new(:Hearts, 4),
+                                      Card.new(:Hearts, 7)]))
+  end
+  
+ def test_update_not_same_suit
+   cda = Cda.new(:n)
+   ccards = CurrentCards.new.add(:s, Card.new(:Hearts, 2)).
+                             add(:w, Card.new(:Spades, 10))
+   cda.update_tags(ccards)
+   assert_equal(false, cda.get_tags(Card.new(:Hearts, 4)).include?(:w))
+   assert_equal(false, cda.get_tags(Card.new(:Hearts, :A)).include?(:w))
+ end
+ 
+
+ def test_get_current_winner
+   cda = Cda.new(:n)
+   ccards = CurrentCards.new.add(:s, Card.new(:Hearts, 2)).
+                             add(:w, Card.new(:Hearts, :J)).
+                             add(:n, Card.new(:Hearts, 4))
+   assert_equal(Card.new(:Hearts, :J), 
+    cda.get_current_winner(Card.new(:Hearts, :J),ccards))
+ end
+
+  def test_update_no_higher_than
+    cda = Cda.new(:n)
+    ccards = CurrentCards.new.add(:e, Card.new(:Hearts, 2)).
+                              add(:s, Card.new(:Hearts, :J)).
+                              add(:w, Card.new(:Hearts, 4))
+                              
+    cda.update_tags(ccards)
+    
+    assert_equal(false, cda.get_tags(Card.new(:Hearts, :Q)).include?(:s))
+    assert_equal(false, cda.get_tags(Card.new(:Hearts, :K)).include?(:s))
+    assert_equal(false, cda.get_tags(Card.new(:Hearts, :A)).include?(:s))
   end
 
 end
