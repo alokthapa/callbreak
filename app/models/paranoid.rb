@@ -1,7 +1,6 @@
 require "player"
 class Paranoid < Player
 
-
   def heuristics_score(card)
     (13 - Card.values.index(card.value) ) + (card.of_suit?(:Spades) ? 13:0)
   end
@@ -14,7 +13,15 @@ class Paranoid < Player
   def register_move(dir, card)
   end
 
+  def register_to_cda(ccards)
+  end
+  
+  def receive_card(card)
+    @cards << card
+  end
+  
   def register_end_hand(ccards)
+    register_to_cda ccards
   end
   
   def get_min_heuristics(cards)
@@ -22,6 +29,7 @@ class Paranoid < Player
   end
 
  def get_card(ccards)
+    register_to_cda ccards
     valids = Rules.valid_moves(@cards, ccards.get_cards)
     valids.each{ |card| puts "valid move card #{card}" }
     

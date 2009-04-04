@@ -40,9 +40,11 @@ class PlayController < ApplicationController
   end
   
 	def get_called_points
-		@board.new_deal
-		@board.setup_other_tricks
-		@roundscore = @scorecard.current_round
+	  if @scorecard.current_round == nil || @scorecard.current_round.complete_round?
+  		@board.new_deal
+  		@board.setup_other_tricks
+    end
+    @roundscore = @scorecard.current_round
 	end
 	
   def user_move
@@ -115,7 +117,7 @@ class PlayController < ApplicationController
 	end
 	
 	def end_round
-		redirect_to :action => "end_game_before" if  @scorecard.rounds == 5
+		redirect_to :action => "end_game_before" if  @scorecard.complete_rounds.length >= 5
 	end
 	
   def debug

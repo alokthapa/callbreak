@@ -21,6 +21,44 @@ class Cda
     [:n, :s, :w, :e] - [@dir] 
   end
   
+  def level(n)
+    
+  end
+  
+  def move(dir, card, rs)
+    if rs.current_cards.moves_left.zero?
+      rs.current_round.hands << CurrentCards.new
+    end
+    rs.current_cards.add dir, card
+    if rs.current_cards.moves_left.zero?
+      win = rs.current_cards.calculate_hand_winner
+      rs.add_one(win)
+      update_waiting_on win
+    else
+      update_waiting_on next_player(dir)
+    end
+    rs
+  end
+  
+
+  def work_on(gd,roundscore)
+    move()
+    
+  end
+  
+  def play(gd, roundscore)
+    only_for(@dir).each do |card|
+      roundclone = roundscore.clone
+      roundclone.currentcards.add(@dir, card)
+      gd[@dir].delete(card)
+      
+      work_on (gd, roundclone)
+      
+      ab = AutoBoard.new(cda)
+      ab.move(@dir,card)
+    end
+  end
+  
   def get_tags(card)
     @ds[card.id]
   end
