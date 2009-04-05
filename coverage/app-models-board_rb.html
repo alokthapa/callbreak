@@ -704,7 +704,7 @@ span.run100 {
 </span><span class="uncovered0"><a name="line104"></a>104     puts &quot;current_cards is #{current_cards} &quot;
 </span><span class="uncovered1"><a name="line105"></a>105 
 </span><span class="uncovered0"><a name="line106"></a>106     if current_cards.moves_left.zero?
-</span><span class="uncovered1"><a name="line107"></a>107       @scorecard.current_round.hands &lt;&lt; CurrentCards.new
+</span><span class="uncovered1"><a name="line107"></a>107       @scorecard.current_round.hands &lt;&lt; Currentcard.new
 </span><span class="uncovered0"><a name="line108"></a>108     end
 </span><span class="uncovered1"><a name="line109"></a>109     #verify turn 
 </span><span class="uncovered0"><a name="line110"></a>110     if waiting_on == dir

@@ -25,28 +25,49 @@ class Cda
     [:n, :s, :w, :e] - [@dir] 
   end
   
+  def score_value(dir, scores)
+    scorevalues = scores.map{|score| score[1]}
+    scores.rassoc( (dir == @dir)? scorevalues.max : scorevalues.min)
+  end
+  
+  def cda_score(dir, rs)
+    others_score = 0
+    others.each{|d| others_score += rs.get_score[d]}
+    rs.get_score[@dir] - others_score
+  end
+  
   def move_score(dir, rs, gd, level)
-
     if level== 0 || rs.complete_round?
       #error
     end
-
+    puts "ok getting ready for move_score"
+    puts dir
+    puts rs
+    puts gd
+    puts level
     valids = Rules.valid_moves(gd[dir],rs.current_cards.get_cards)
 
     scores = valids.map do |vcard|
       rclone = rs.clone
+      gdclone = copy_gd gd
       
-      gd[dir].delete vcard
+      gdclone[dir].delete vcard
       next_dir= rclone.add_card(dir, vcard)
-      
-      if level== 0 || rclone.complete_round?
-        [vcard, rclone.get_score[@dir] - others.inject{|sum, n| sum + rclone.get_score[n] }]
+      if level == 0 || rclone.complete_round?
+        [vcard, cda_score(dir, rclone)]
       else
-        [vcard, move_score(next_dir, rclone, gd, level-1)[1]]
+        [vcard, move_score(next_dir, rclone, gdclone, level-1)[1]]
       end
     end
+    puts score_value(dir, scores)
+    score_value(dir, scores)
     
-    scores.rassoc( (dir == @dir)? scores[1].max : scores[1].min)
+  end
+  
+  def copy_gd(gd)
+    cl = {}
+    gd.each_pair{|k,v| cl[k] = v.clone}
+    cl
   end
   
   def get_tags(card)

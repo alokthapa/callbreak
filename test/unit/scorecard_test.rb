@@ -15,7 +15,7 @@ class TestAppModelsScorecard < Test::Unit::TestCase
   
   def test_complete_rounds
     scorecard = Scorecard.new
-    rs1 = RoundScore.new
+    rs1 = Roundscore.new
     rs1.hash[:n]= 8
     rs1.hash[:s]= 2
 
@@ -28,10 +28,10 @@ class TestAppModelsScorecard < Test::Unit::TestCase
   
   def test_get_for_player
     scorecard = Scorecard.new                        
-    scorecard.add_new(RoundScore.new.add_called_points(:s, 4).add(:s, 5).add(:n, 8))
-    scorecard.add_new(RoundScore.new.add_called_points(:s, 4).add(:s, 4).add(:n, 9))
-    scorecard.add_new(RoundScore.new.add_called_points(:s, 4).add(:s, 3).add(:n, 10))
-    scorecard.add_new(RoundScore.new.add_called_points(:s, 4).add(:s, 2).add(:n, 11))
+    scorecard.add_new(Roundscore.new.add_called_points(:s, 4).add(:s, 5).add(:n, 8))
+    scorecard.add_new(Roundscore.new.add_called_points(:s, 4).add(:s, 4).add(:n, 9))
+    scorecard.add_new(Roundscore.new.add_called_points(:s, 4).add(:s, 3).add(:n, 10))
+    scorecard.add_new(Roundscore.new.add_called_points(:s, 4).add(:s, 2).add(:n, 11))
    
     assert_equal(4.1+4 -4-4, scorecard.get_scorecard(:s))
   end
@@ -48,23 +48,23 @@ class TestAppModelsScorecard < Test::Unit::TestCase
 
   def test_setup_user_tricks
     scorecard = Scorecard.new
-    scorecard.add_new RoundScore.new
+    scorecard.add_new Roundscore.new
     scorecard.setup_user_tricks(:s, 3)
     assert_equal(3,scorecard.current_round.called[:s])
   end
   
   def test_current_round
     scorecard = Scorecard.new
-    rscore = RoundScore.new
+    rscore = Roundscore.new
     scorecard.add_new rscore 
     assert_equal(rscore, scorecard.current_round)
   end
   
   def test_rounds
     scorecard = Scorecard.new
-    scorecard.add_new RoundScore.new
+    scorecard.add_new Roundscore.new
     assert_equal(1,scorecard.rounds)
-    scorecard.add_new RoundScore.new
+    scorecard.add_new Roundscore.new
     assert_equal(2,scorecard.rounds)
   end
 end

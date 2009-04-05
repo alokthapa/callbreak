@@ -1,13 +1,14 @@
-class RoundScore
+class Roundscore
   attr_accessor :hash, :called, :hands
+  
   def initialize
     @hash = {:n => 0,:e => 0,:s => 0, :w => 0}
     @called  = {:n => 0,:e => 0,:s => 0, :w => 0}
-    @hands = [CurrentCards.new]
+    @hands = [Currentcard.new]
   end
   
   def clone
-    r = RoundScore.new
+    r = Roundscore.new
     r.hash = @hash.clone
     r.called = @called.clone
     r.hands = @hands.map{|cc| cc.clone}
@@ -41,7 +42,7 @@ class RoundScore
   
   def add_card(dir, card)
     if current_cards.moves_left.zero?
-      @hands << CurrentCards.new
+      @hands << Currentcard.new
     end
     current_cards.add dir, card
     if current_cards.moves_left.zero?

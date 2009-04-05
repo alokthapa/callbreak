@@ -64,7 +64,7 @@ class TestCda < Test::Unit::TestCase
   
   def test_add_played_ccards
     cda = Cda.new(:n)
-    ccards = CurrentCards.new.add(:n, Card.from_id(1)).
+    ccards = Currentcard.new.add(:n, Card.from_id(1)).
                              add(:e, Card.from_id(2)).
                              add(:s, Card.from_id(3)).
                              add(:w, Card.from_id(4))
@@ -120,7 +120,7 @@ class TestCda < Test::Unit::TestCase
   
  def test_update_not_same_suit
    cda = Cda.new(:n)
-   ccards = CurrentCards.new.add(:s, Card.new(:Hearts, 2)).
+   ccards = Currentcard.new.add(:s, Card.new(:Hearts, 2)).
                              add(:w, Card.new(:Spades, 10))
    cda.update_tags(ccards)
    assert_equal(false, cda.get_tags(Card.new(:Hearts, 4)).include?(:w))
@@ -130,7 +130,7 @@ class TestCda < Test::Unit::TestCase
 
  def test_get_current_winner
    cda = Cda.new(:n)
-   ccards = CurrentCards.new
+   ccards = Currentcard.new
    ccards.add(:s, Card.new(:Hearts, 2)).
                              add(:w, Card.new(:Hearts, :J)).
                              add(:n, Card.new(:Hearts, 4))
@@ -140,7 +140,7 @@ class TestCda < Test::Unit::TestCase
 
   def test_update_no_higher_than
     cda = Cda.new(:n)
-    ccards = CurrentCards.new
+    ccards = Currentcard.new
     ccards.add(:e, Card.new(:Hearts, 2)).
                               add(:s, Card.new(:Hearts, :J)).
                               add(:w, Card.new(:Hearts, 4))
@@ -154,7 +154,7 @@ class TestCda < Test::Unit::TestCase
   
   def test_update_no_spades_higher_than
     cda = Cda.new(:n)
-    ccards = CurrentCards.new
+    ccards = Currentcard.new
     ccards.add(:e, Card.new(:Hearts, 2)).
                               add(:s, Card.new(:Spades, :J)).
                               add(:w, Card.new(:Clubs, 4))
@@ -183,7 +183,7 @@ class TestCda < Test::Unit::TestCase
     cda.tag_player_card(Card.new(:Spades, :A))
     assert(cda.only_for(:n).include?(Card.new(:Spades, :A)), "Failure message.")
     
-    ccards = CurrentCards.new.add(:s, Card.new(:Hearts, :K)).
+    ccards = Currentcard.new.add(:s, Card.new(:Hearts, :K)).
                               add(:w, Card.new(:Hearts, 10)).
                               add(:n, Card.new(:Hearts, 8)).
                               add(:e, Card.new(:Hearts, 2))
@@ -242,7 +242,7 @@ class TestCda < Test::Unit::TestCase
   
   def test_generate_model_only_for
     cda = Cda.new(:n)
-    ccards = CurrentCards.new.add(:s, Card.new(:Hearts, :K)).
+    ccards = Currentcard.new.add(:s, Card.new(:Hearts, :K)).
                               add(:w, Card.new(:Hearts, 10)).
                               add(:n, Card.new(:Hearts, 8)).
                               add(:e, Card.new(:Hearts, 2))
@@ -258,6 +258,45 @@ class TestCda < Test::Unit::TestCase
     cda = Cda.new(:n)
     gmodel = cda.generate_domain_model(13)
     assert(gmodel[:s].all?{|c| !gmodel[:e].include?(c) && !gmodel[:w].include?(c)}, "Failure message.")
+  end
+  
+  def test_copy_gd
+    cda = Cda.new(:n)
+    ccards = Currentcard.new.add(:s, Card.new(:Hearts, :K)).
+                              add(:w, Card.new(:Hearts, 10)).
+                              add(:n, Card.new(:Hearts, 8)).
+                              add(:e, Card.new(:Hearts, 2))
+    cda.update_tags(ccards)
+    gmodel = cda.generate_domain_model(13)
+    
+    gclone = cda.copy_gd gmodel
+    gclone[:s].delete Card.new(:Hearts, :A)
+    
+    assert(gmodel[:s].include?(Card.new(:Hearts, :A)) ,"fail")
+    assert_equal(false, gclone[:s].include?(Card.new(:Hearts, :A)))
+  end
+  
+  
+  def test_score_value
+    cda = Cda.new(:n)
+    assert_equal([Card.from_id(2),5], cda.score_value(:n, [[Card.from_id(1), 2], [Card.from_id(2),5], [Card.from_id(4),1]]))
+    assert_equal([Card.from_id(4),1], cda.score_value(:w, [[Card.from_id(1), 2], [Card.from_id(2),5], [Card.from_id(4),1]]))
+    
+  end
+  
+  def test_move_score
+    cda = Cda.new(:n)
+    rs = Roundscore.new
+    gmodel = {:n=> [Card.new(:Hearts, :A), Card.new(:Hearts, 4)],
+              :e=> [Card.new(:Hearts, :K), Card.new(:Clubs, 4)],
+              :s=> [Card.new(:Hearts, :J), Card.new(:Clubs, 5)],
+              :w=> [Card.new(:Hearts, :Q), Card.new(:Clubs, 2)]}
+    
+
+   
+    assert_equal([Card.new(:Hearts, :A),0.2], cda.move_score(:n,rs, gmodel, 7)
+)
+   
   end
 
 end

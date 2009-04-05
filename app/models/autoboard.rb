@@ -12,7 +12,7 @@ class AutoBoard
   def initialize(gd)
     @gd = gd
     #somehow initialize values
-    @roundscore = RoundScore.new
+    @roundscore = Roundscore.new
   end
   
   def update_waiting_on(dir)
@@ -37,7 +37,7 @@ class AutoBoard
   
   def move(dir, card)
     if current_cards.moves_left.zero?
-      current_round.hands << CurrentCards.new
+      current_round.hands << Currentcard.new
     end
     #verify turn 
     if waiting_on == dir

@@ -1,5 +1,5 @@
 require "roundscore"
-require "currentcards"
+require "currentcard"
 require "scorecard"
 require "board"
 require "player"

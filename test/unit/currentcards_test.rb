@@ -2,14 +2,14 @@ require "test_helper"
 class TestAppModelsCurrentcards < Test::Unit::TestCase
   
   def test_add_new_card
-    ccards = CurrentCards.new
+    ccards = Currentcard.new
     card = Card.new(:Spades, :A)
     ccards.add(:n, card)
     assert(ccards.get_cards.include?(card), "Failure message.")
  end
  
  def test_moves_left
-   ccards = CurrentCards.new
+   ccards = Currentcard.new
     ccards.add(:n, Card.new(:Spades, :A)).
            add(:e, Card.new(:Spades, 10))
            
@@ -24,7 +24,7 @@ class TestAppModelsCurrentcards < Test::Unit::TestCase
  end
  
  def test_card_for
-   ccards = CurrentCards.new
+   ccards = Currentcard.new
    ccards.add(:n, Card.new(:Spades, :A)).
           add(:e, Card.new(:Spades, 10))
   
@@ -33,7 +33,7 @@ class TestAppModelsCurrentcards < Test::Unit::TestCase
  end
  
  def test_clone
-   ccards = CurrentCards.new
+   ccards = Currentcard.new
    ccards.add(:n, Card.new(:Spades, :A)).
           add(:e, Card.new(:Spades, 10))
   
@@ -45,7 +45,7 @@ class TestAppModelsCurrentcards < Test::Unit::TestCase
  end
  
  def test_get_cards
-   ccards = CurrentCards.new
+   ccards = Currentcard.new
 
    ccards.add(:n, Card.new(:Spades, :A)).
           add(:e, Card.new(:Spades, 10)).
@@ -57,7 +57,7 @@ class TestAppModelsCurrentcards < Test::Unit::TestCase
  
  
  def test_current_hand_winner
-   ccards = CurrentCards.new
+   ccards = Currentcard.new
 
    ccards.add(:n, Card.new(:Spades, :A)).
           add(:e, Card.new(:Spades, 10)).

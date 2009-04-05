@@ -91,7 +91,7 @@ class Board
   
   
   def robot_move(dir)
-      move(dir, players[dir].get_card(current_cards.moves_left.zero? ? CurrentCards.new: current_cards)) if waiting_on == dir
+      move(dir, players[dir].get_card(current_cards.moves_left.zero? ? Currentcard.new: current_cards)) if waiting_on == dir
   end
   
   
@@ -105,7 +105,7 @@ class Board
     puts "current_cards is #{current_cards} "
 
     if current_cards.moves_left.zero?
-      @scorecard.current_round.hands << CurrentCards.new
+      @scorecard.current_round.hands << Currentcard.new
     end
     #verify turn 
     if waiting_on == dir

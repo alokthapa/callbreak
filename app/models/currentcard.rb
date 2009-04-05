@@ -1,5 +1,5 @@
 
-class CurrentCards
+class Currentcard
   
   attr_accessor :ccards
   
@@ -8,7 +8,7 @@ class CurrentCards
   end
   
   def clone
-    cl = CurrentCards.new
+    cl = Currentcard.new
     cl.ccards = @ccards.clone
     cl
   end

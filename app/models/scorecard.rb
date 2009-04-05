@@ -14,7 +14,7 @@ class Scorecard
   end
   
   def setup_round(called)
-    add_new RoundScore.new
+    add_new Roundscore.new
     called.each do |c|
       current_round.add_called_points(c[0], c[1])
     end
