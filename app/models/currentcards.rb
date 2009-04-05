@@ -1,8 +1,16 @@
 
 class CurrentCards
   
+  attr_accessor :ccards
+  
   def initialize
     @ccards = []
+  end
+  
+  def clone
+    cl = CurrentCards.new
+    cl.ccards = @ccards.clone
+    cl
   end
   
   def card_for(dir)

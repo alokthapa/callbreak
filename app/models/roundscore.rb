@@ -1,9 +1,25 @@
 class RoundScore
-  attr_reader :hash, :called, :hands  
+  attr_accessor :hash, :called, :hands
   def initialize
     @hash = {:n => 0,:e => 0,:s => 0, :w => 0}
     @called  = {:n => 0,:e => 0,:s => 0, :w => 0}
     @hands = [CurrentCards.new]
+  end
+  
+  def clone
+    r = RoundScore.new
+    r.hash = @hash.clone
+    r.called = @called.clone
+    r.hands = @hands.map{|cc| cc.clone}
+    r
+  end
+  
+  def directions
+    [:n,:e,:s,:w]
+  end
+  
+  def next_player(dir)
+    directions[(directions.index(dir) +1)%4]
   end
   
   def complete_round?
@@ -21,6 +37,20 @@ class RoundScore
       add(user, 1)
     end
     self
+  end
+  
+  def add_card(dir, card)
+    if current_cards.moves_left.zero?
+      @hands << CurrentCards.new
+    end
+    current_cards.add dir, card
+    if current_cards.moves_left.zero?
+      win = current_cards.calculate_hand_winner
+      add_one win
+      win
+    else
+      next_player(dir)
+    end
   end
   
   def current_cards
@@ -58,5 +88,5 @@ class RoundScore
       @called[name] + (@hash[name] - @called[name] ) * 0.1
     end
   end
-  
+
 end

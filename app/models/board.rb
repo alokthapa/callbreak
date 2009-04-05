@@ -111,17 +111,9 @@ class Board
     if waiting_on == dir
       update_waiting_on :none
       puts "yes we were waiting on you... "
-      #add move
-      current_cards.add dir, card
-      tell(dir, card)
-      if current_cards.moves_left.zero?
-        win = current_cards.calculate_hand_winner
-        @scorecard.current_round.add_one(win)
-        tell_end_hand current_cards
-        update_waiting_on win
-      else
-        update_waiting_on next_player(dir)
-      end
+
+      update_waiting_on(@scorecard.current_round.add_card(dir, card))
+
       @players[dir].cards.delete(card)
     else
       puts "it's not your time yet chump.... "

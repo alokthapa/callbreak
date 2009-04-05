@@ -12,6 +12,10 @@ class Cda
       @ds[id] = directions
     end
   end
+
+  def next_player(dir)
+    directions[(directions.index(dir) +1)%4]
+  end
   
   def directions
     [:n, :s, :w, :e]
@@ -21,42 +25,28 @@ class Cda
     [:n, :s, :w, :e] - [@dir] 
   end
   
-  def level(n)
-    
-  end
-  
-  def move(dir, card, rs)
-    if rs.current_cards.moves_left.zero?
-      rs.current_round.hands << CurrentCards.new
-    end
-    rs.current_cards.add dir, card
-    if rs.current_cards.moves_left.zero?
-      win = rs.current_cards.calculate_hand_winner
-      rs.add_one(win)
-      update_waiting_on win
-    else
-      update_waiting_on next_player(dir)
-    end
-    rs
-  end
-  
+  def move_score(dir, rs, gd, level)
 
-  def work_on(gd,roundscore)
-    move()
-    
-  end
-  
-  def play(gd, roundscore)
-    only_for(@dir).each do |card|
-      roundclone = roundscore.clone
-      roundclone.currentcards.add(@dir, card)
-      gd[@dir].delete(card)
-      
-      work_on (gd, roundclone)
-      
-      ab = AutoBoard.new(cda)
-      ab.move(@dir,card)
+    if level== 0 || rs.complete_round?
+      #error
     end
+
+    valids = Rules.valid_moves(gd[dir],rs.current_cards.get_cards)
+
+    scores = valids.map do |vcard|
+      rclone = rs.clone
+      
+      gd[dir].delete vcard
+      next_dir= rclone.add_card(dir, vcard)
+      
+      if level== 0 || rclone.complete_round?
+        [vcard, rclone.get_score[@dir] - others.inject{|sum, n| sum + rclone.get_score[n] }]
+      else
+        [vcard, move_score(next_dir, rclone, gd, level-1)[1]]
+      end
+    end
+    
+    scores.rassoc( (dir == @dir)? scores[1].max : scores[1].min)
   end
   
   def get_tags(card)
@@ -126,21 +116,6 @@ class Cda
   end
   
   
-  #refactor later to utilities
-  def cards_smaller_than(card)
-    (Card.values.index(card.value)+1..Card.values.length-1).map{ |id| Card.new(card.suit, Card.values[id]) }
-  end
-  
-  def cards_higher_than(card)
-    cards = (0..Card.values.index(card.value)).map{ |id| Card.new(card.suit, Card.values[id]) }
-    cards.delete(card)
-    cards
-  end
-  
-  def all_cards_of_suit(suit)
-    Card.values.map{|value| Card.new(suit, value)}
-  end
-  
   def make_cards_from_pairs(pairs)
     pairs.map{|pair| Card.from_id(pair[0])}
   end
@@ -172,4 +147,22 @@ class Cda
     end
     ans
   end
+  
+  
+  #refactor later to utilities
+  def cards_smaller_than(card)
+    (Card.values.index(card.value)+1..Card.values.length-1).map{ |id| Card.new(card.suit, Card.values[id]) }
+  end
+  
+  def cards_higher_than(card)
+    cards = (0..Card.values.index(card.value)).map{ |id| Card.new(card.suit, Card.values[id]) }
+    cards.delete(card)
+    cards
+  end
+  
+  def all_cards_of_suit(suit)
+    Card.values.map{|value| Card.new(suit, value)}
+  end
+  
+  
  end

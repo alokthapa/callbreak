@@ -46,4 +46,24 @@ class TestAppModelsRoundscore < Test::Unit::TestCase
     assert_equal(2, roundscore.hash[:s])
   end
   
+  def test_clone
+    roundscore = RoundScore.new.add_called_points(:s, 4).add_one(:s)
+    roundscore.add_card(:n, Card.from_id(1))
+    rc  = roundscore.clone
+    
+    assert_equal(4,rc.called[:s])
+    assert_equal(1,rc[:s])
+    
+    assert_equal([Card.from_id(1)], rc.current_cards.get_cards)
+
+    rc.add_one(:s)
+    rc.add_card(:e, Card.from_id(2))
+    
+    assert_equal(1,roundscore[:s])
+    assert_equal(2,rc[:s])
+    
+    assert_equal([Card.from_id(1)], roundscore.current_cards.get_cards)
+    
+  end
+  
 end

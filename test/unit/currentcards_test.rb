@@ -30,9 +30,18 @@ class TestAppModelsCurrentcards < Test::Unit::TestCase
   
   assert_equal(Card.new(:Spades, :A), ccards.card_for(:n))
   assert_nil(ccards.card_for(:s))
-           
-   
+ end
+ 
+ def test_clone
+   ccards = CurrentCards.new
+   ccards.add(:n, Card.new(:Spades, :A)).
+          add(:e, Card.new(:Spades, 10))
   
+   cl = ccards.clone
+   assert_equal(Card.new(:Spades, :A),cl.card_for(:n))
+   cl.add(:s, Card.new(:Spades, 3))
+   assert_equal(Card.new(:Spades, 3), cl.card_for(:s))
+   assert_nil(ccards.card_for(:s))
  end
  
  def test_get_cards
