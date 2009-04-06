@@ -118,6 +118,7 @@ class TestCda < Test::Unit::TestCase
                                       Card.new(:Hearts, 7)]))
   end
   
+  
  def test_update_not_same_suit
    cda = Cda.new(:n)
    ccards = Currentcard.new.add(:s, Card.new(:Hearts, 2)).
@@ -233,11 +234,43 @@ class TestCda < Test::Unit::TestCase
   end
   
   def test_generate_model_length_eq
-    cda = Cda.new(:n)
+    cda = Cda.new(:w)
     gmodel = cda.generate_domain_model(13)
     assert_equal(13,gmodel[:s].length)
-    assert_equal(13,gmodel[:w].length)
+    assert_equal(13,gmodel[:n].length)
     assert_equal(13,gmodel[:e].length)
+    
+    cda.tag_player_cards(
+    [ Card.new(:Hearts, 2),Card.new(:Spades, :J), Card.new(:Clubs, 10), Card.new(:Spades, 5),
+      Card.new(:Spades, :K), Card.new(:Clubs, 2), Card.new(:Clubs, 8), Card.new(:Hearts, :K),
+      Card.new(:Hearts, 7), Card.new(:Diamonds, 4), Card.new(:Spades, 6), Card.new(:Spades, :A),
+      Card.new(:Spades, 4)])
+      
+    cda.update_tags(Currentcard.new.add(:n, Card.new(:Diamonds, :K)).
+                              add(:e, Card.new(:Diamonds, 3)).
+                              add(:s, Card.new(:Diamonds, 5)).
+                              add(:w, Card.new(:Diamonds, 4)))
+
+    cda.update_tags(Currentcard.new.add(:n, Card.new(:Diamonds, :A)).
+                              add(:e, Card.new(:Diamonds, 8)).
+                              add(:s, Card.new(:Diamonds, 6)).
+                              add(:w, Card.new(:Spades, 4)))
+                              
+    cda.update_tags(Currentcard.new.add(:w, Card.new(:Clubs, 10)).
+                              add(:n, Card.new(:Clubs, :J)).
+                              add(:e, Card.new(:Clubs,:Q)).
+                              add(:s, Card.new(:Clubs, :K)))
+
+    
+    gmodel = cda.generate_domain_model(10)
+    
+    assert_equal(10,gmodel[:s].length)
+    
+    assert_equal(10,cda.only_for(:w).length)
+ #   assert_equal(10,gmodel[:w].length)
+    assert_equal(10,gmodel[:e].length)
+    assert_equal(10,gmodel[:n].length)
+
   end
   
   def test_generate_model_only_for

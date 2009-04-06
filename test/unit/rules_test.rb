@@ -118,4 +118,16 @@ class TestAppModelsRules < Test::Unit::TestCase
       [Card.new(:Spades, 10),Card.new(:Spades, 7), Card.new(:Spades, 5)]))
         
   end
+  
+# 
+# dirncardCard: Diamonds KdirecardCard: Diamonds 3dirscardCard: Diamonds 5dirwcardCard: Diamonds 4
+# dirncardCard: Diamonds AdirecardCard: Diamonds 8dirscardCard: Diamonds 6dirwcardCard: Spades 4
+# dirwcardCard: Clubs 10dirncardCard: Clubs JdirecardCard: Clubs QdirscardCard: Clubs K
+# dirscardCard: Diamonds 9dirwcardCard: Hearts KdirncardCard: Diamonds 2direcardCard: Diamonds Q
+# direcardCard: Diamonds 10dirscardCard: Spades 7dirwcardCard: Hearts 2dirncardCard: Diamonds 7
+# dirscardCard: Hearts 6dirwcardCard: Hearts 7dirncardCard: Hearts 9direcardCard: Hearts A
+# direcardCard: Hearts 3dirscardCard: Hearts JdirwcardCard: Clubs 8dirncardCard: Hearts Q
+# dirncardCard: Hearts 5direcardCard: Hearts 4dirscardCard: Hearts 8dirwcardCard: Clubs 2
+# rclone is #<Roundscore:0x240d218>
+# 
 end

@@ -47,6 +47,11 @@ class Cda
     2.times do |n|
       puts "monte_carlo sampling no #{n}"
       gmodel = generate_domain_model(length)
+      puts "gmodel n has #{gmodel[:n].length} cards"
+      puts "gmodel s has #{gmodel[:s].length} cards"
+      puts "gmodel e has #{gmodel[:e].length} cards"
+      puts "gmodel w has #{gmodel[:w].length} cards"
+      
       sampled_results << move_score(@dir, rs, gmodel, 4*2)
     end
     max_from_sample sampled_results
@@ -73,18 +78,22 @@ class Cda
       if level == 0 || rclone.complete_round?
         [vcard, cda_score(dir, rclone)]
       else
-        scc = move_score(next_dir, rclone, gdclone, level-1)
-        if scc == nil
-          puts "scc is nil, sth is wrong here"
-          puts "next_dir is #{next_dir}"
-          puts "rclone is #{rclone}"
-          puts "gdclone is #{gdclone}"
-          puts "level is #{level-1}"
+        if gdclone[next_dir].empty?
+          nil
+        else
+          scc = move_score(next_dir, rclone, gdclone, level-1)  
+          if scc == nil
+            puts "scc is nil, sth is wrong here"
+            puts "next_dir is #{next_dir}"
+            puts "rclone is #{rclone}"
+            puts "gdclone is #{gdclone}"
+            puts "level is #{level-1}"
+          end
+          [vcard, scc[1]]
         end
-        [vcard, scc[1]]
       end
     end
-    score_value(dir, scores)
+    score_value(dir, scores.compact)
   end
   
   def copy_gd(gd)
@@ -136,7 +145,7 @@ class Cda
             remove_tags(dir, cards_higher_than(win))
         end
         
-        if(!fcard.of_suit?(Rules.WinSuit) && win.of_suit?(Rules.WinSuit) && !card.same_suit?(fcard))
+        if(!fcard.of_suit?(Rules.WinSuit) && win != card && win.of_suit?(Rules.WinSuit) && !card.same_suit?(fcard))
           remove_tags(dir, cards_higher_than(win))
         end
       end
