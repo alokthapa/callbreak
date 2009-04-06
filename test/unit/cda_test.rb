@@ -298,5 +298,13 @@ class TestCda < Test::Unit::TestCase
 )
    
   end
+  
+  def test_max_from_sample
+    sr = [[Card.from_id(1),5],[Card.from_id(2),3],[Card.from_id(5),1]]
+    cda = Cda.new(:n)
+    
+    assert_equal(Card.from_id(1),cda.max_from_sample(sr))
+  end
+  
 
 end

@@ -30,6 +30,28 @@ class Cda
     scores.rassoc( (dir == @dir)? scorevalues.max : scorevalues.min)
   end
   
+  def max_from_sample(sr)
+    res = {}
+    sr.each do |val|
+      if res[val[0]]
+        res[val[0]] += val[1]
+      else
+        res[val[0]] = val[1]
+      end
+    end
+  res.invert[res.values.max]
+  end
+  
+  def monte_carlo(rs, length)
+    sampled_results= []
+    2.times do |n|
+      puts "monte_carlo sampling no #{n}"
+      gmodel = generate_domain_model(length)
+      sampled_results << move_score(@dir, rs, gmodel, 4*2)
+    end
+    max_from_sample sampled_results
+  end
+  
   def cda_score(dir, rs)
     others_score = 0
     others.each{|d| others_score += rs.get_score[d]}
@@ -37,15 +59,10 @@ class Cda
   end
   
   def move_score(dir, rs, gd, level)
-    if level== 0 || rs.complete_round?
-      #error
-    end
-    puts "ok getting ready for move_score"
-    puts dir
-    puts rs
-    puts gd
-    puts level
-    valids = Rules.valid_moves(gd[dir],rs.current_cards.get_cards)
+
+    pcards = rs.current_cards.get_cards
+    
+    valids = Rules.valid_moves(gd[dir],pcards)
 
     scores = valids.map do |vcard|
       rclone = rs.clone
@@ -56,12 +73,18 @@ class Cda
       if level == 0 || rclone.complete_round?
         [vcard, cda_score(dir, rclone)]
       else
-        [vcard, move_score(next_dir, rclone, gdclone, level-1)[1]]
+        scc = move_score(next_dir, rclone, gdclone, level-1)
+        if scc == nil
+          puts "scc is nil, sth is wrong here"
+          puts "next_dir is #{next_dir}"
+          puts "rclone is #{rclone}"
+          puts "gdclone is #{gdclone}"
+          puts "level is #{level-1}"
+        end
+        [vcard, scc[1]]
       end
     end
-    puts score_value(dir, scores)
     score_value(dir, scores)
-    
   end
   
   def copy_gd(gd)
@@ -140,11 +163,11 @@ class Cda
   def make_cards_from_pairs(pairs)
     pairs.map{|pair| Card.from_id(pair[0])}
   end
-  
+    
   def only_for(dir)
     make_cards_from_pairs @ds.select{|k, v| v == [dir]}
   end
-  
+   
   def combination(cards, r, without=[])
     cards.select{|c| !without.include?(c)}.sort_by{rand}[0...r]
   end
@@ -166,6 +189,7 @@ class Cda
       ans[d] = cards
       cards.each{|c| used << c }  
     end
+    ans[@dir] = only_for(@dir)
     ans
   end
   

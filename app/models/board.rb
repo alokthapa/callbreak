@@ -25,10 +25,10 @@ class Board
    
   def initialize(playername)
     raise "Invalid name, just use simple words" unless  playername =~ /\w/ 
-  	@players = {  :w => Paranoid.new("Bob"), 
-  	              :n => Paranoid.new("Rob"), 
-  	              :e => Paranoid.new("John"),  
-  	              :s => Player.new(playername)}
+  	@players = {  :w => Paranoid.new("Bob", :w), 
+  	              :n => Paranoid.new("Rob", :n), 
+  	              :e => Paranoid.new("John", :e),  
+  	              :s => Player.new(playername, :s)}
     @scorecard = Scorecard.new
   end
 
@@ -91,9 +91,16 @@ class Board
   
   
   def robot_move(dir)
-      move(dir, players[dir].get_card(current_cards.moves_left.zero? ? Currentcard.new: current_cards)) if waiting_on == dir
+      if waiting_on == dir
+        @players[dir].cards.map{|c| puts c } 
+        [:n, :e, :s, :w].map{|k| puts "#{k} has #{@players[k].cards.length} cards left." }
+        
+          update_waiting_on :none
+          card = players[dir].get_card(@scorecard.current_round)
+          update_waiting_on dir
+          move(dir, card) 
+      end
   end
-  
   
   def move(dir, card)
     puts ".....starting move......."
@@ -105,15 +112,14 @@ class Board
     puts "current_cards is #{current_cards} "
 
     if current_cards.moves_left.zero?
-      @scorecard.current_round.hands << Currentcard.new
+      tell_end_hand(current_cards)
     end
+
     #verify turn 
     if waiting_on == dir
       update_waiting_on :none
       puts "yes we were waiting on you... "
-
       update_waiting_on(@scorecard.current_round.add_card(dir, card))
-
       @players[dir].cards.delete(card)
     else
       puts "it's not your time yet chump.... "

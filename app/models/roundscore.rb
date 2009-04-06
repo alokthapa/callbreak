@@ -23,8 +23,16 @@ class Roundscore
     directions[(directions.index(dir) +1)%4]
   end
   
+  def hands_left
+    13 - total_hands
+  end
+  
   def complete_round?
-    13 == @hash.values.inject{|sum, n| sum + n }
+    13 == total_hands
+  end
+  
+  def total_hands
+    @hash.values.inject{|sum, n| sum + n }
   end
   
   def [](name)
@@ -88,6 +96,15 @@ class Roundscore
     else
       @called[name] + (@hash[name] - @called[name] ) * 0.1
     end
+  end
+  
+  def to_s
+    puts "Called:" 
+    @called.each{|k, v| puts "#{k} called #{v}"}
+    puts "Score:" 
+    @hash.each{|k, v| puts "#{k} has #{v}"}
+    puts "Hands:"
+    @hands.each{|ccard| puts "#{ccard}"}
   end
 
 end

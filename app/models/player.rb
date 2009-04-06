@@ -8,9 +8,10 @@ class Player
   attr_reader :name
   attr_accessor :cards
 
-  def initialize(name)
+  def initialize(name, dir)
     @cards = Array.new
     @name = name
+    @dir = dir
   end
   
   def cards_sorted
