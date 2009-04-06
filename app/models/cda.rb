@@ -52,6 +52,8 @@ class Cda
       puts "gmodel e has #{gmodel[:e].length} cards"
       puts "gmodel w has #{gmodel[:w].length} cards"
       
+      gmodel[:s].each{ |card| puts "predicted card for s is #{card}"}
+      
       sampled_results << move_score(@dir, rs, gmodel, 4*2)
     end
     max_from_sample sampled_results
@@ -88,6 +90,8 @@ class Cda
             puts "rclone is #{rclone}"
             puts "gdclone is #{gdclone}"
             puts "level is #{level-1}"
+            puts "vcard is #{vcard}"
+            
           end
           [vcard, scc[1]]
         end

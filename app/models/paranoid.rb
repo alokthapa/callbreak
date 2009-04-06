@@ -10,7 +10,6 @@ class Paranoid < Player
     @cards = Array.new
     @name = name
     @dir = dir
-    @cda = Cda.new(dir)
   end
 
   def register_to_cda(ccards)
@@ -39,13 +38,16 @@ class Paranoid < Player
     
     if valids.any?{|card| Rules.beats_all?(card, ccards.get_cards)}
       get_min_heuristics valids if ccards.moves_left == 1
-       @cda.monte_carlo(rs, rs.hands_left-1)
+      valids.first if valids.length == 1
+       @cda.monte_carlo(rs, rs.hands_left)
     else
       get_min_heuristics valids
     end
  end
  
  def get_called_points
+   @cda = Cda.new(@dir)
+   
    @cards.each{|card| @cda.tag_player_card card}
     normalized_random_result(number_ace_cards(@cards) + extra_winsuit(@cards) + highcard_combo(@cards))
  end
