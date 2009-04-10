@@ -56,7 +56,7 @@ class Paranoid < Player
    return too_many_choices(valids) if valids.length > 8
     
    if valids.any?{|card| Rules.beats_all?(card, pcards)}
-     return get_min_heuristics valids if ccards.moves_left == 1
+     return get_min_heuristics(valids) if ccards.moves_left == 1
      @cda.monte_carlo(rs, rs.hands_left)
    else
       if rs.hands_left > 5
@@ -77,7 +77,7 @@ class Paranoid < Player
   
   def normalized_random_result(num)
    #TODO need better algorithm
-  norm =  [(num -1) > 0 ? (num - 1) :1 ,num, num, num, num,  num+1, num+1,num+1, num+1,num+2 ].sort_by{rand}.first
+  norm =  [(num -1) > 0 ? (num - 1) : 1 ,num, num, num, num,   num+1 ].sort_by{rand}.first
   norm > 0 ? norm : 1
   end
 end

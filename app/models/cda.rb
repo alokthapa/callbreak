@@ -56,7 +56,7 @@ class Cda
   
   def calc_level(length)
     if length < 5
-      length
+      4
     else
       2
     end
@@ -66,23 +66,19 @@ class Cda
     sampled_results= []
     arr = []
     
-    1.times do |n|
+    2.times do |n|
       arr[n] = Thread.new {
         puts "monte_carlo sampling no #{n}"
         gmodel = nil
+        rsclone = rs.clone
         begin
-          gmodel = generate_domain_model(get_dir_hash(rs, length))
+          gmodel = generate_domain_model(get_dir_hash(rsclone, length))
         rescue
           puts " ok lengths do not match for gmodel!  "
         end
-        puts "gmodel n has #{gmodel[:n].length} cards"
-        puts "gmodel s has #{gmodel[:s].length} cards"
-        puts "gmodel e has #{gmodel[:e].length} cards"
-        puts "gmodel w has #{gmodel[:w].length} cards"
-
         t = Time.now
         gmodel[:s].each{ |card| puts "predicted card for s is #{card}"}
-        Thread.current["res"] = move_score(@dir, rs, gmodel, 4*calc_level(length) -rs.current_cards.moves_left+1 )
+        Thread.current["res"] = move_score(@dir, rsclone, gmodel, 4*calc_level(length)  )
         t2  = Time.now - t
         puts "the operation took #{t2} seconds"
         }
@@ -105,15 +101,15 @@ class Cda
   
   def move_score(dir, rs, gd, level)
     pcards = rs.current_cards.moves_left.zero? ? [] : rs.current_cards.get_cards
-    puts "starting move_score for #{dir} at level #{level}"
+  #  puts "starting move_score for #{dir} at level #{level}"
     
     valids = Rules.valid_moves(gd[dir],pcards)
-    puts "played cards are "
-    pcards.each{|v| puts "#{v}"}
-    
-    puts "valid moves are "
-    valids.each{|v| puts "#{v}"}
-
+ #   puts "played cards are "
+ #   pcards.each{|v| puts "#{v}"}
+ #   
+ #   puts "valid moves are "
+ #   valids.each{|v| puts "#{v}"}
+ #
     scores = valids.map do |vcard|
       rclone = rs.clone
       gdclone = copy_gd gd
@@ -122,11 +118,13 @@ class Cda
       next_dir= rclone.add_card(dir, vcard)
       if level == 1 || rclone.complete_round?
         scr =  cda_score(dir, rclone)
-        puts "returning cda_score #{scr}"
+ #       puts "returning cda_score #{scr}"
         [vcard, scr]
       else
         if gdclone[next_dir].empty?
-          nil
+          scr =  cda_score(dir, rclone)
+    #      puts "returning cda_score #{scr}"
+          [vcard, scr]
         else
           scc = move_score(next_dir, rclone, gdclone, level-1)            
           if scc == nil
@@ -137,6 +135,10 @@ class Cda
             puts "level is #{level-1}"
             puts "vcard is #{vcard}"
           end
+ #         unless scc[1]
+ #           puts "scc[1] is nil "
+ #           puts "scc is #{scc}"
+ #         end
           [vcard, scc[1]]
         end
       end

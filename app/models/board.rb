@@ -65,6 +65,7 @@ class Board
   end
   
   def tell_end_hand(ccards)
+    puts "called tell_end_hand"
     @players.values.each { |p|  p.register_end_hand(ccards) }
   end
 

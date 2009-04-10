@@ -3,10 +3,34 @@ require "test_helper"
 class TestCard < Test::Unit::TestCase
  include Cardutility
  
+ def test_cardsuits
+   assert_equal([ :Hearts,:Clubs, :Diamonds, :Spades], Card.suits)
+ end
+ 
+ def test_cardvalues
+   assert_equal([:A,:K, :Q,:J,10,9,8,7,6,5,4,3,2], Card.values)
+ end
+ 
+ def test_card_from_id
+   assert_equal(Card.new(:Hearts, :A),Card.from_id(0))
+ end
+ 
+ def test_cards_of_suit
+   assert_equal([Card.new(:Hearts, :A), Card.new(:Hearts, :K)],Card.cards_of_suit([Card.new(:Hearts, :A),Card.new(:Hearts, :K), Card.new(:Spades, :A)]))
+ end
+ 
+  
+  def test_same_suit
+    assert(Card.new(:Hearts, :A).same_suit?(Card.new(:Hearts, :Q)), "Failure message.")
+    assert_equal(false,Card.new(:Hearts, :A).same_suit?(Card.new(:Spades, :A)))
+    
+  end
+ 
  def test_initialize
    card = Card.new(:Spades, :A)
    assert_equal(:Spades, card.suit)
    assert_equal(:A, card.value)
+   assert_equal(39,card.id)
  end
  
   def test_equality
