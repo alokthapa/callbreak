@@ -26,11 +26,13 @@ class Cda
   end
   
   def score_value(dir, scores)
+    #tie breaking using heuristics rule to be added
     scorevalues = scores.map{|score| score[1]}
     scores.rassoc( (dir == @dir)? scorevalues.max : scorevalues.min)
   end
   
   def max_from_sample(sr)
+    #tie breaking using heuristics rule to be added
     res = {}
     sr.each do |val|
       if res[val[0]]
@@ -42,34 +44,75 @@ class Cda
   res.invert[res.values.max]
   end
   
+  def get_dir_hash(rs, length)
+    dir_hash = {:n => length, :s => length, :w => length, :e => length}
+  
+    unless rs.current_cards.moves_left.zero?
+      rs.current_cards.get_dirs.each{|n| dir_hash[n] -= 1}
+    end
+    dir_hash
+    
+  end
+  
+  def calc_level(length)
+    if length < 5
+      length
+    else
+      2
+    end
+  end
+  
   def monte_carlo(rs, length)
     sampled_results= []
-    2.times do |n|
-      puts "monte_carlo sampling no #{n}"
-      gmodel = generate_domain_model(length)
-      puts "gmodel n has #{gmodel[:n].length} cards"
-      puts "gmodel s has #{gmodel[:s].length} cards"
-      puts "gmodel e has #{gmodel[:e].length} cards"
-      puts "gmodel w has #{gmodel[:w].length} cards"
-      
-      gmodel[:s].each{ |card| puts "predicted card for s is #{card}"}
-      
-      sampled_results << move_score(@dir, rs, gmodel, 4*2)
+    arr = []
+    
+    1.times do |n|
+      arr[n] = Thread.new {
+        puts "monte_carlo sampling no #{n}"
+        gmodel = nil
+        begin
+          gmodel = generate_domain_model(get_dir_hash(rs, length))
+        rescue
+          puts " ok lengths do not match for gmodel!  "
+        end
+        puts "gmodel n has #{gmodel[:n].length} cards"
+        puts "gmodel s has #{gmodel[:s].length} cards"
+        puts "gmodel e has #{gmodel[:e].length} cards"
+        puts "gmodel w has #{gmodel[:w].length} cards"
+
+        t = Time.now
+        gmodel[:s].each{ |card| puts "predicted card for s is #{card}"}
+        Thread.current["res"] = move_score(@dir, rs, gmodel, 4*calc_level(length) -rs.current_cards.moves_left+1 )
+        t2  = Time.now - t
+        puts "the operation took #{t2} seconds"
+        }
     end
+    
+    arr.each do |t| 
+      t.join
+      sampled_results << t["res"]
+    end
+    
     max_from_sample sampled_results
   end
   
   def cda_score(dir, rs)
-    others_score = 0
-    others.each{|d| others_score += rs.get_score[d]}
-    rs.get_score[@dir] - others_score
+    rs.heuristic_score(dir)
+ #   others_score = 0
+ #   others.each{|d| others_score += rs.get_score[d]}
+ #   rs.get_score[@dir] - others_score
   end
   
   def move_score(dir, rs, gd, level)
-
-    pcards = rs.current_cards.get_cards
+    pcards = rs.current_cards.moves_left.zero? ? [] : rs.current_cards.get_cards
+    puts "starting move_score for #{dir} at level #{level}"
     
     valids = Rules.valid_moves(gd[dir],pcards)
+    puts "played cards are "
+    pcards.each{|v| puts "#{v}"}
+    
+    puts "valid moves are "
+    valids.each{|v| puts "#{v}"}
 
     scores = valids.map do |vcard|
       rclone = rs.clone
@@ -77,13 +120,15 @@ class Cda
       
       gdclone[dir].delete vcard
       next_dir= rclone.add_card(dir, vcard)
-      if level == 0 || rclone.complete_round?
-        [vcard, cda_score(dir, rclone)]
+      if level == 1 || rclone.complete_round?
+        scr =  cda_score(dir, rclone)
+        puts "returning cda_score #{scr}"
+        [vcard, scr]
       else
         if gdclone[next_dir].empty?
           nil
         else
-          scc = move_score(next_dir, rclone, gdclone, level-1)  
+          scc = move_score(next_dir, rclone, gdclone, level-1)            
           if scc == nil
             puts "scc is nil, sth is wrong here"
             puts "next_dir is #{next_dir}"
@@ -91,7 +136,6 @@ class Cda
             puts "gdclone is #{gdclone}"
             puts "level is #{level-1}"
             puts "vcard is #{vcard}"
-            
           end
           [vcard, scc[1]]
         end
@@ -189,20 +233,21 @@ class Cda
     make_cards_from_pairs @ds.select{|k,v| v.include?(dir) && !v.include?(:played)}
   end
   
-  def generate_domain_model(length)
+  def generate_domain_model(dir_hash)
     ans = {}
     used = []
-    rand_others = others.sort_by{rand}
+    rand_others = others.sort_by{|d| maybe(d).length}
     rand_others.each do |d|
       cards = only_for(d)
-      if length > cards.length
-        need_more = length - cards.length
+      if dir_hash[d] > cards.length
+        need_more = dir_hash[d] - cards.length
         cards += combination(maybe(d), need_more, used)
       end
       ans[d] = cards
       cards.each{|c| used << c }  
     end
     ans[@dir] = only_for(@dir)
+ #   dir_hash.keys.each{|k| raise if ans[k].length != dir_hash[k]}
     ans
   end
   

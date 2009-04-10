@@ -209,8 +209,6 @@ class TestCda < Test::Unit::TestCase
     
     cda.tag_played_card(:s, Card.new(:Spades, :K))
     assert_equal(false,cda.maybe(:n).include?(Card.new(:Spades, :K)))
-    
-    
   end
   
   def test_tag_player_cards
@@ -222,11 +220,22 @@ class TestCda < Test::Unit::TestCase
     
   end
   
+  def test_generate_model_diff_length
+    cda = Cda.new(:n)
+    cda.tag_player_cards((0..12).map{|id| Card.from_id(id)})
+    gmodel = cda.generate_domain_model({:w => 13, :n =>13, :s => 13, :e =>12})
+    assert_equal(13,gmodel[:n].length)
+    assert_equal(12,gmodel[:e].length)
+    assert_equal(13,gmodel[:w].length)
+    assert_equal(13,gmodel[:s].length)
+  end
+  
+  
   def test_generate_model_not_include_player_cards
 
     cda = Cda.new(:n)
     cda.tag_player_cards((0..12).map{|id| Card.from_id(id)})
-    gmodel = cda.generate_domain_model(13)
+    gmodel = cda.generate_domain_model({:w => 13, :n =>13, :s => 13, :e =>13})
     
     assert(!gmodel[:s].include?(Card.from_id(0)), "Failure message.")
     assert(!gmodel[:e].include?(Card.from_id(0)), "Failure message.")
@@ -235,7 +244,7 @@ class TestCda < Test::Unit::TestCase
   
   def test_generate_model_length_eq
     cda = Cda.new(:w)
-    gmodel = cda.generate_domain_model(13)
+    gmodel = cda.generate_domain_model({:w => 13, :n =>13, :s => 13, :e =>13})
     assert_equal(13,gmodel[:s].length)
     assert_equal(13,gmodel[:n].length)
     assert_equal(13,gmodel[:e].length)
@@ -262,7 +271,7 @@ class TestCda < Test::Unit::TestCase
                               add(:s, Card.new(:Clubs, :K)))
 
     
-    gmodel = cda.generate_domain_model(10)
+    gmodel = cda.generate_domain_model({:w => 10, :n =>10, :s => 10, :e =>10})
     
     assert_equal(10,gmodel[:s].length)
     
@@ -280,7 +289,7 @@ class TestCda < Test::Unit::TestCase
                               add(:n, Card.new(:Hearts, 8)).
                               add(:e, Card.new(:Hearts, 2))
     cda.update_tags(ccards)
-    gmodel = cda.generate_domain_model(13)
+    gmodel = cda.generate_domain_model({:w => 13, :n =>13, :s => 13, :e =>13})
     assert(gmodel[:s].include?(Card.new(:Hearts, :A)) ,"fail")
     assert(!gmodel[:e].include?(Card.new(:Hearts, :A)),"fail")
     assert(!gmodel[:w].include?(Card.new(:Hearts, :A)),"fail")
@@ -300,7 +309,7 @@ class TestCda < Test::Unit::TestCase
                               add(:n, Card.new(:Hearts, 8)).
                               add(:e, Card.new(:Hearts, 2))
     cda.update_tags(ccards)
-    gmodel = cda.generate_domain_model(13)
+    gmodel = cda.generate_domain_model({:w => 13, :n =>13, :s => 13, :e =>13})
     
     gclone = cda.copy_gd gmodel
     gclone[:s].delete Card.new(:Hearts, :A)
@@ -327,7 +336,7 @@ class TestCda < Test::Unit::TestCase
     
 
    
-    assert_equal([Card.new(:Hearts, :A),0.2], cda.move_score(:n,rs, gmodel, 7)
+    assert_equal([Card.new(:Hearts, :A),-1], cda.move_score(:n,rs, gmodel, 7)
 )
    
   end
@@ -339,5 +348,80 @@ class TestCda < Test::Unit::TestCase
     assert_equal(Card.from_id(1),cda.max_from_sample(sr))
   end
   
+  def test_get_dir_hash
+    
+    rs = Roundscore.new
+    rs.add_card(:n, Card.from_id(1))
+    rs.add_card(:e, Card.from_id(3))
+    
+    cda = Cda.new(:w)
+    dir_hash =cda.get_dir_hash(rs, 13)
+    assert_equal(12, dir_hash[:n])
+    assert_equal(12, dir_hash[:e])
+    assert_equal(13, dir_hash[:s])
+    assert_equal(13, dir_hash[:w])
+  end
+  
+ # update waiting on returned n
+ # Card: Clubs 10
+ # Card: Spades 5
+ # Card: Spades 2
+ # n has 3 cards left.
+ # e has 3 cards left.
+ # s has 3 cards left.
+ # w has 2 cards left.
+ # user card =>  Card: Clubs 10
+ # user card =>  Card: Spades 5
+ # user card =>  Card: Spades 2
+ # only for dir Card: Clubs 10
+ # only for dir Card: Spades 2
+ # only for dir Card: Spades 5
+ # valid move card Card: Spades 5
+ # valid move card Card: Spades 2
+ # monte_carlo sampling no 0
+ # gmodel n has 3 cards
+ # gmodel s has 2 cards
+ # gmodel e has 3 cards
+ # gmodel w has 3 cards
+ # predicted card for s is Card: Spades 7
+ # predicted card for s is Card: Hearts 10
+ # monte_carlo sampling no 1
+ # gmodel n has 3 cards
+ # gmodel s has 2 cards
+ # gmodel e has 3 cards
+ # gmodel w has 3 cards
+ # predicted card for s is Card: Spades 10
+ # predicted card for s is Card: Hearts 7
+ # scc is nil, sth is wrong here
+ # next_dir is n
+ # Called:
+ # w called 4
+ # n called 2
+ # s called 1
+ # e called 2
+ # Score:
+ # w has 6
+ # n has 1
+ # s has 2
+ # e has 2
+ # Hands:
+ # dirncardCard: Diamonds 2direcardCard: Diamonds KdirscardCard: Diamonds 6dirwcardCard: Diamonds A
+ # dirwcardCard: Diamonds 8dirncardCard: Diamonds 4direcardCard: Diamonds 9dirscardCard: Diamonds 10
+ # dirscardCard: Clubs 9dirwcardCard: Clubs AdirncardCard: Clubs 2direcardCard: Clubs 7
+ # dirwcardCard: Clubs 4dirncardCard: Clubs 5direcardCard: Clubs JdirscardCard: Clubs Q
+ # dirscardCard: Clubs 3dirwcardCard: Spades 4dirncardCard: Clubs 6direcardCard: Clubs K
+ # dirwcardCard: Hearts AdirncardCard: Hearts QdirecardCard: Hearts 5dirscardCard: Hearts 3
+ # dirwcardCard: Hearts 2dirncardCard: Hearts KdirecardCard: Hearts JdirscardCard: Hearts 6
+ # dirncardCard: Diamonds 7direcardCard: Diamonds 3dirscardCard: Diamonds QdirwcardCard: Spades 3
+ # dirwcardCard: Hearts 8dirncardCard: Spades KdirecardCard: Spades AdirscardCard: Hearts 9
+ # direcardCard: Diamonds 5dirscardCard: Diamonds JdirwcardCard: Spades QdirncardCard: Clubs 8
+ # dirwcardCard: Hearts 4dirncardCard: Spades 2direcardCard: Spades 9dirscardCard: Hearts 7
+ # direcardCard: Spades 6dirscardCard: Spades 10dirwcardCard: Spades 7
+ # rclone is #<Roundscore:0x24e2080>
+ # gdclone is wCard: Hearts 10Card: Spades 8nCard: Clubs 10Card: Spades 5seCard: Spades J
+ # level is 2
+ # vcard is Card: Spades 7
+ # update waiting on returned none
+ # 
 
 end

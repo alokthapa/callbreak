@@ -28,22 +28,45 @@ class Paranoid < Player
     cards.min{|a,b| heuristics_score(a) <=> heuristics_score(b)}
   end
 
+  def too_many_choices(cards)
+    puts "in too many choices"
+    total = []
+    (Card.suits-[Rules.WinSuit]).each do |suit|
+      scards = Card.cards_of_suit(cards, suit)
+      total << [scards.length, suit]
+    end
+    min_suit = total.select{|t| t[0] >0}.sort_by{|t| t[0] }.first[1]
+    
+    Card.cards_of_suit(cards, min_suit).sort_by{|card| Card.values.index(card.value) }.last
+
+  end    
+  
  def get_card(rs)
    ccards = rs.current_cards
+   pcards = ccards.moves_left.zero? ? [] : ccards.get_cards
    register_to_cda ccards
    @cards.each{|card| puts  "user card =>  #{card}"}
-    @cda.only_for(@dir).each{|card| puts  "only for dir #{card}"}
-    valids = Rules.valid_moves(@cards, ccards.get_cards)
-    valids.each{ |card| puts "valid move card #{card}" }
+   @cda.only_for(@dir).each{|card| puts  "only for dir #{card}"}
+   
+   valids = Rules.valid_moves(@cards, pcards )
+   valids.each{ |card| puts "valid move card #{card}" }
+   puts "number of valids is #{valids.length}"
+   
+   return valids.first if valids.length == 1
+   return too_many_choices(valids) if valids.length > 8
     
-    if valids.any?{|card| Rules.beats_all?(card, ccards.get_cards)}
-      get_min_heuristics valids if ccards.moves_left == 1
-      valids.first if valids.length == 1
-       @cda.monte_carlo(rs, rs.hands_left)
-    else
-      get_min_heuristics valids
-    end
+   if valids.any?{|card| Rules.beats_all?(card, pcards)}
+     return get_min_heuristics valids if ccards.moves_left == 1
+     @cda.monte_carlo(rs, rs.hands_left)
+   else
+      if rs.hands_left > 5
+        get_min_heuristics valids
+      else 
+        @cda.monte_carlo(rs, rs.hands_left)
+      end
+   end
  end
+ 
  
  def get_called_points
    @cda = Cda.new(@dir)

@@ -98,7 +98,7 @@ class Board
           update_waiting_on :none
           card = players[dir].get_card(@scorecard.current_round)
           update_waiting_on dir
-          move(dir, card) 
+          move(dir, card)           
       end
   end
   

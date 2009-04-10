@@ -89,6 +89,11 @@ class Roundscore
     scores
   end
   
+  def heuristic_score(dir)
+    otherscores = 0
+    (directions - [dir]).each{ |d| otherscores +=  @hash[d]}
+    @hash[dir]- otherscores
+  end
   
   def get_score_for(name)
     if @called[name] > @hash[name]
