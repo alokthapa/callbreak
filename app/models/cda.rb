@@ -77,7 +77,6 @@ class Cda
           puts " ok lengths do not match for gmodel!  "
         end
         t = Time.now
-        gmodel[:s].each{ |card| puts "predicted card for s is #{card}"}
         Thread.current["res"] = move_score(@dir, rsclone, gmodel, 4*calc_level(length)  )
         t2  = Time.now - t
         puts "the operation took #{t2} seconds"

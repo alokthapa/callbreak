@@ -6,6 +6,7 @@ class Autoboard
   end
   
   def new_deal
+
     deck = Deck.new
     @players.values.each{|p| p.empty_cards }
     @players.values.each do |p|
@@ -13,13 +14,19 @@ class Autoboard
     end
     new_deal if @players.values.any?{|p| p.need_redeal?}
     @waiting_on = directions[@scorecard.rounds%4]
+    
+    @players.each do |k, v|
+      puts "cards for #{v.name}"
+      v.cards.each{|card| puts card }
+    end
   end
    
   def initialize
-  	@players = {  :w => Moose.new("moose1", :w), 
-  	              :n => Paranoid.new("paranoid1", :n), 
-  	              :e => Least.new("least1", :e),  
-  	              :s => Paranoid.new("paranoid2", :s)}
+  	@players = {  :w => Paranoid.new("paranoid_w", :w), 
+  	              :n => Moose.new("moose_n", :n), 
+  	              :e => Paranoid.new("paranoid_e", :e),  
+  	              :s => Moose.new("moose_s", :s)}
+  	
     @scorecard = Scorecard.new
   end
 
@@ -119,7 +126,8 @@ class Autoboard
     end
     
     @totals.each do |k, v|
-      puts "avg score for #{k} is #{v/n}"
+      puts "total score for #{k} is #{v}"
+      puts "avg score for #{k} is #{v/n.to_f}"
     end
   end
   

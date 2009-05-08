@@ -25,9 +25,9 @@ class Board
    
   def initialize(playername)
     raise "Invalid name, just use simple words" unless  playername =~ /\w/ 
-  	@players = {  :w => Paranoid.new("Bob", :w), 
-  	              :n => Paranoid.new("Rob", :n), 
-  	              :e => Paranoid.new("John", :e),  
+  	@players = {  :w => Moose.new("Bob", :w), 
+  	              :n => Moose.new("Rob", :n), 
+  	              :e => Moose.new("John", :e),  
   	              :s => Player.new(playername, :s)}
     @scorecard = Scorecard.new
   end
@@ -65,7 +65,6 @@ class Board
   end
   
   def tell_end_hand(ccards)
-    puts "called tell_end_hand"
     @players.values.each { |p|  p.register_end_hand(ccards) }
   end
 
@@ -94,8 +93,6 @@ class Board
   def robot_move(dir)
       if waiting_on == dir
         @players[dir].cards.map{|c| puts c } 
-        [:n, :e, :s, :w].map{|k| puts "#{k} has #{@players[k].cards.length} cards left." }
-        
           update_waiting_on :none
           card = players[dir].get_card(@scorecard.current_round)
           update_waiting_on dir
@@ -104,13 +101,7 @@ class Board
   end
   
   def move(dir, card)
-    puts ".....starting move......."
-    puts "#{dir} has cards"
     @players[dir].cards.map{|c| puts c } 
-    [:n, :e, :s, :w].map{|k| puts "#{k} has #{@players[k].cards.length} cards left." }
-
-    puts "#{dir} played card #{card}"
-    puts "current_cards is #{current_cards} "
 
     if current_cards.moves_left.zero?
       tell_end_hand(current_cards)
@@ -119,17 +110,9 @@ class Board
     #verify turn 
     if waiting_on == dir
       update_waiting_on :none
-      puts "yes we were waiting on you... "
       update_waiting_on(@scorecard.current_round.add_card(dir, card))
       @players[dir].cards.delete(card)
-    else
-      puts "it's not your time yet chump.... "
     end
-    
-    puts ".....ending move......."
-    puts "#{dir} played card #{card}"
-    puts "current_cards is #{current_cards} "
-    [:n, :e, :s, :w].map{|k| puts "#{k} has #{@players[k].cards.length} cards left." }
   end
   
   def names_only
